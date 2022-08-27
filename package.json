@@ -1,0 +1,24 @@
+{
+  "name": "fabricjs_vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@scena/guides": "^0.18.1",
+    "canvas2video": "^1.1.4",
+    "element-plus": "^2.2.14",
+    "fabric": "^5.2.4",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.0.3",
+    "sass": "^1.54.5",
+    "vite": "^3.0.7",
+    "vite-plugin-cross-origin-isolation": "^0.1.6"
+  }
+}
