@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky install",
+    "commit": "git-cz"
   },
   "dependencies": {
     "@scena/guides": "^0.18.1",
@@ -16,9 +18,24 @@
     "vue": "^3.2.37"
   },
   "devDependencies": {
+    "@commitlint/config-conventional": "^17.1.0",
     "@vitejs/plugin-vue": "^3.0.3",
+    "commitizen": "^4.2.5",
+    "commitlint": "^17.1.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
     "sass": "^1.54.5",
     "vite": "^3.0.7",
     "vite-plugin-cross-origin-isolation": "^0.1.6"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
