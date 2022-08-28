@@ -1,0 +1,4 @@
+src/gif/fabricGif.js
+src/gif/gifToSprite.js
+src/gifjs/gif.js
+src/gifjs/gif.worker.js

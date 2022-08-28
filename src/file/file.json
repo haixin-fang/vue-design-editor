@@ -1,0 +1,91 @@
+{
+  "panel": [
+    {
+      "name": "模板",
+      "type": "template",
+      "icon": "<el-icon><Management /></el-icon>"
+    },
+    {
+      "name": "文字",
+      "type": "text",
+      "icon": ""
+    },
+    {
+      "name": "照片",
+      "type": "photo",
+      "icon": ""
+    },
+    {
+      "name": "视频",
+      "type": "vedio",
+      "icon": ""
+    },
+    {
+      "name": "图标",
+      "type": "icon",
+      "icon": ""
+    },
+    {
+      "name": "形状",
+      "type": "shape",
+      "icon": ""
+    },
+    {
+      "name": "背景",
+      "type": "background",
+      "icon": ""
+    },
+    {
+      "name": "图层",
+      "type": "layout",
+      "icon": ""
+    },
+    {
+      "name": "尺寸",
+      "type": "resize",
+      "icon": ""
+    },
+    {
+      "name": "二维码",
+      "type": "qrcode",
+      "icon": ""
+    }
+  ],
+  "newcomponentlist": [
+    {
+      "name": "Image",
+      "id": 0
+    },
+    {
+      "name": "Rect",
+      "id": 1
+    },
+    {
+      "name": "Circle",
+      "id": 2
+    }
+  ],
+  "vedioList": [
+    {
+      "name": "视频",
+      "src": "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4",
+      "img": "https://m.elongstatic.com/HotelTenthousandAura/admin_images/2022_02_24/b9fff9b1ef2c466ca170137bb08ed17e.jpg"
+    }
+  ],
+  "image": {
+    "bg": [{ "src": "https://m.elongstatic.com/HotelTenthousandAura/admin_images/2022_05_06/b9380a7f1d1f4d048723631414e1ae26.jpg?w=750&h=1448", "name": "111" }],
+    "phote": [
+      {
+        "src": "https://m.elongstatic.com/HotelTenthousandAura/admin_images/2021_09_29/21bcee7b3fcd4789acd883e55517d72b?w=192&h=192",
+        "name": "图片",
+        "type": "jpg"
+      },
+      {
+        "src": "https://m.elongstatic.com/HotelTenthousandAura/admin_images/2021_09_28/572746aad4d04ac797cef7788e3b139e?w=750&h=172",
+        "name": "gif",
+        "type": "gif"
+      }
+      
+    ]
+  }
+}

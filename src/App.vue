@@ -7,11 +7,12 @@
       <el-button type="text">显示/隐藏参考线</el-button>
       <el-button type="text">显示/隐藏标尺</el-button>
       <el-button type="text" @click="download">下载</el-button>
+      <el-button type="text" @click="downloadGif">gif下载</el-button>
       <el-button type="text">保存</el-button>
       <el-button type="text">预览</el-button>
     </div>
     <div class="container">
-      <div class="left" @dragstart="handleDragStart">
+      <div class="left">
         <el-scrollbar class="toolpanel">
           <div
             class="panel_item"
@@ -23,7 +24,7 @@
             {{ item.name }}
           </div>
         </el-scrollbar>
-        <div class="list">
+        <div class="list" @dragstart="handleDragStart">
           <template v-if="activeType == 'shape'">
             <div
               v-for="(element, index) in newcomponentlist"
@@ -70,6 +71,23 @@
               </video>
             </div> -->
           </template>
+          <div v-if="activeType == 'photo'" class="tp">
+            <div
+              class="tp_item"
+              v-for="(item, index) in photo"
+              :key="index"
+              :draggable="true"
+              :data-index="JSON.stringify(item)"
+            >
+              <img
+                crossorigin="anonymous"
+                :draggable="false"
+                :src="item.src"
+                alt=""
+              />
+              <div>{{ item.name }}</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="center" ref="center">
@@ -104,19 +122,29 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref, reactive } from 'vue'
+import {
+  defineComponent,
+  onMounted,
+  ref,
+  reactive,
+  getCurrentInstance
+} from 'vue'
 import Guides from '@scena/guides'
 import { fabric } from 'fabric'
 import Resize from './components/resize.vue'
 import { Canvas2Video } from 'canvas2video'
-import { tagEmits } from 'element-plus'
+import json from './file/file.json'
+import { fabricGif } from './gif/fabricGif'
+import { saveAs } from 'file-saver'
+import { parseGIF, decompressFrames } from 'gifuct-js'
 export default defineComponent({
   components: {
     Resize
   },
   setup() {
+    const { proxy } = getCurrentInstance()
     const workspace = ref()
-    const activeType = ref('template')
+    const activeType = ref('photo')
     const center = ref()
     const layout = reactive({
       win: {
@@ -141,80 +169,15 @@ export default defineComponent({
     })
     let ctx
     let horizontal, vertical
-    const vedioList = ref([
-      {
-        name: '视频',
-        src: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-        img: 'https://m.elongstatic.com/HotelTenthousandAura/admin_images/2022_02_24/b9fff9b1ef2c466ca170137bb08ed17e.jpg'
-      }
-    ])
-    const newcomponentlist = ref([
-      {
-        name: 'Image',
-        id: 0
-      },
-      {
-        name: 'Rect',
-        id: 1
-      },
-      {
-        name: 'Circle',
-        id: 2
-      }
-    ])
-    const panel = ref([
-      {
-        name: '模板',
-        type: 'template',
-        icon: '<el-icon><Management /></el-icon>'
-      },
-      {
-        name: '文字',
-        type: 'text',
-        icon: ''
-      },
-      {
-        name: '照片',
-        type: 'phote',
-        icon: ''
-      },
-      {
-        name: '视频',
-        type: 'vedio',
-        icon: ''
-      },
-      {
-        name: '图标',
-        type: 'icon',
-        icon: ''
-      },
-      {
-        name: '形状',
-        type: 'shape',
-        icon: ''
-      },
-      {
-        name: '背景',
-        type: 'background',
-        icon: ''
-      },
-      {
-        name: '图层',
-        type: 'layout',
-        icon: ''
-      },
-      {
-        name: '尺寸',
-        type: 'resize',
-        icon: ''
-      },
-      {
-        name: '二维码',
-        type: 'qrcode',
-        icon: ''
-      }
-    ])
-
+    const vedioList = ref(json.vedioList)
+    const newcomponentlist = ref(json.newcomponentlist)
+    const panel = ref(json.panel)
+    const photo = ref(json.image.phote)
+    const bg = ref(json.image.bg)
+    let frameNum = 0
+    let list = [],
+      cb = () => {}
+    let framesIndex = 0
     const getGuidesStyle = type => ({
       position: 'absolute',
       zIndex: 1,
@@ -252,13 +215,18 @@ export default defineComponent({
         console.log(options)
       })
       ctx.on('drop', options => {
+        options.e.preventDefault()
+        options.e.stopPropagation()
         const element = options.e.dataTransfer.getData('index')
+        console.log(element)
         if (element) {
           let result = JSON.parse(element)
           if (activeType.value === 'shape') {
             drawShape(result, options.e)
           } else if (activeType.value == 'vedio') {
             drawVedio(result, options.e)
+          } else if (activeType.value == 'photo') {
+            drawimg(result, options.e)
           }
         }
       })
@@ -414,7 +382,6 @@ export default defineComponent({
 
     function drawShape(item, e) {
       if (item.name == 'Rect') {
-        debugger
         let rect = new fabric.Rect({
           top: e.layerY,
           left: e.layerX,
@@ -429,41 +396,151 @@ export default defineComponent({
       }
     }
 
-    function drawimg(item) {
-      if (item.name == 'Rect') {
-        let rect = new fabric.Rect({
-          top: 50,
-          left: 100,
-          width: 100,
-          height: 100,
-          fill: 'red'
+    async function drawimg(item, e) {
+      // let imgOptions = {
+      //   id: "image",
+      //   left: 50,
+      //   top: 50,
+      //   scaleX: 1,
+      //   scaleY: 1,
+      //   originX: "center",
+      //   originY: "center",
+      //   cornerStrokeColor: "blue",
+      // };
+      // var canvasImage = new fabric.Image(document.getElementById('img'), imgOptions);
+      // canvasImage.hasControls = true;
+      // canvasImage.hasBorders = true;
+      // ctx.add(canvasImage);
+      if (item.type != 'gif') {
+        fabric.Image.fromURL(item.src, img => {
+          // img.scale(0.5).set('flipX', true)
+          img.set({
+            top: e.layerY,
+            left: e.layerX,
+            width: img.width,
+            height: img.height
+          })
+          ctx.add(img)
         })
-        // 可以通过自定义属性的方式确定唯一标识
-        rect.custom = 'ffffff'
-        ctx.add(rect)
-        console.log(ctx.item(0))
-      } else if (item.name == 'Image') {
-        // let imgOptions = {
-        //   id: "image",
-        //   left: 50,
-        //   top: 50,
-        //   scaleX: 1,
-        //   scaleY: 1,
-        //   originX: "center",
-        //   originY: "center",
-        //   cornerStrokeColor: "blue",
-        // };
-        // var canvasImage = new fabric.Image(document.getElementById('img'), imgOptions);
-        // canvasImage.hasControls = true;
-        // canvasImage.hasBorders = true;
-        // ctx.add(canvasImage);
-        fabric.Image.fromURL(
-          'http://pic5.40017.cn/i/ori/Xyim4zTzRC.jpg',
-          img => {
-            img.scale(0.5).set('flipX', true)
+      } else {
+        // const gif1 = await fabricGif(item.src, 750, 172)
+        // debugger
+        // gif1.set({ top: e.layerY, left: e.layerX })
+        // ctx.add(gif1)
+        // fabric.util.requestAnimFrame(function render() {
+        //   ctx.renderAll()
+        //   fabric.util.requestAnimFrame(render)
+        // })
+        fabric.Image.fromURL(item.src, function (img) {
+          img.left = e.layerX
+          img.top = e.layerY
+          gif(item.src, function (frames, delay) {
+            frameNum = frames.length
+            var animInterval
+            img.dirty = true
+            let a = -1
+            img._render = function (ctx) {
+              ctx.drawImage(
+                frames[framesIndex],
+                -this.width / 2,
+                -this.height / 2,
+                this.width,
+                this.height
+              )
+              if (a != framesIndex) {
+                cb()
+                console.log(framesIndex)
+              }
+              a = framesIndex
+            }
+            img.play = function () {
+              if (typeof animInterval === 'undefined') {
+                animInterval = setInterval(function () {
+                  framesIndex++
+                  if (framesIndex === frames.length) {
+                    framesIndex = 0
+                  }
+                }, delay)
+              }
+            }
+            img.stop = function () {
+              clearInterval(animInterval)
+              animInterval = undefined
+            }
+            img.play()
             ctx.add(img)
+          })
+        })
+
+        function gif(url, callback) {
+          var tempCanvas = document.createElement('canvas')
+          var tempCtx = tempCanvas.getContext('2d')
+
+          var gifCanvas = document.createElement('canvas')
+          var gifCtx = gifCanvas.getContext('2d')
+
+          var imgs = []
+
+          var xhr = new XMLHttpRequest()
+          xhr.open('get', url, true)
+          xhr.responseType = 'arraybuffer'
+          xhr.onload = function () {
+            var tempBitmap = {}
+            tempBitmap.url = url
+            var arrayBuffer = xhr.response
+            if (arrayBuffer) {
+              var gif = parseGIF(arrayBuffer)
+              var frames = decompressFrames(gif, true)
+              gifCanvas.width = frames[0].dims.width
+              gifCanvas.height = frames[0].dims.height
+
+              for (var i = 0; i < frames.length; i++) {
+                createFrame(frames[i])
+              }
+              callback(imgs, frames[0].delay)
+            }
           }
-        )
+          xhr.send(null)
+
+          var disposalType
+
+          function createFrame(frame) {
+            if (!disposalType) {
+              disposalType = frame.disposalType
+            }
+
+            var dims = frame.dims
+
+            tempCanvas.width = dims.width
+            tempCanvas.height = dims.height
+            var frameImageData = tempCtx.createImageData(
+              dims.width,
+              dims.height
+            )
+
+            frameImageData.data.set(frame.patch)
+
+            if (disposalType !== 1) {
+              gifCtx.clearRect(0, 0, gifCanvas.width, gifCanvas.height)
+            }
+
+            tempCtx.putImageData(frameImageData, 0, 0)
+            gifCtx.drawImage(tempCanvas, dims.left, dims.top)
+            var dataURL = gifCanvas.toDataURL('image/png')
+            var tempImg = fabric.util.createImage()
+            tempImg.src = dataURL
+            imgs.push(tempImg)
+          }
+        }
+        render()
+
+        function render() {
+          if (canvas) {
+            ctx.renderAll()
+          }
+
+          fabric.util.requestAnimFrame(render)
+        }
       }
     }
     function initLayout() {
@@ -487,6 +564,9 @@ export default defineComponent({
       initFabric()
       initLayout()
     })
+    // const getAssetsFile = (url) => {
+    //   return new URL(`../assets/images/${url}`, import.meta.url).href
+    // }
     window.addEventListener('resize', e => {
       initLayout()
     })
@@ -498,6 +578,8 @@ export default defineComponent({
       layout,
       newcomponentlist,
       vedioList,
+      photo,
+      bg,
       updateSize,
       handleDragStart(e) {
         e.dataTransfer.setData('index', e.target.dataset.index)
@@ -517,9 +599,7 @@ export default defineComponent({
             // corePath: 'https://unpkg.com/@ffmpeg/core@0.6.0/ffmpeg-core.js'
           }
         })
-        debugger
         canvas2videoInstance.startRecord()
-
         setTimeout(() => {
           canvas2videoInstance.stopRecord()
         }, 3000)
@@ -541,6 +621,44 @@ export default defineComponent({
             x.send()
           })
           .catch(err => console.error(err))
+      },
+      downloadGif() {
+        var gif = new GIF({
+          workers: 4,
+          quality: 10,
+          workerScript: new URL(`./gifjs/gif.worker.js`, import.meta.url)
+        })
+        // or a canvas element
+
+        gif.on('finished', function (blob) {
+          // console.log('dddd', blob)
+          // saveAs(blob, 'image/gif')
+          let url = URL.createObjectURL(blob)
+          const actions = document.createElement('a')
+          actions.setAttribute('href', url)
+          actions.setAttribute('download', '2')
+          actions.click()
+        })
+
+        cb = function () {
+          // list.forEach(item => {
+          //   gif.addFrame(item, { delay: 200 })
+          // })
+          // gif.addFrame()
+          // if (i < 1000) {
+          //   gif.addFrame(document.getElementById('canvas'))
+          //   requestAnimationFrame(render)
+          //   i++
+          // } else {
+          //   gif.render()
+          // }
+          if (gif.frames.length < frameNum * 20) {
+            gif.addFrame(document.getElementById('canvas'), { delay: 0 })
+          } else {
+            gif.render()
+            cb = () => {}
+          }
+        }
       }
     }
   }
@@ -573,6 +691,7 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       height: 100%;
+      box-sizing: border-box;
       border-right: 1px solid #eef2f8;
       .panel_item {
         width: 80px;
@@ -593,6 +712,8 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
+    width: calc(100% - 80px);
     .list-group-item {
       width: 60px;
       height: 60px;
@@ -603,6 +724,20 @@ export default defineComponent({
       &.list-group-item2 {
         width: 150px;
         height: 150px;
+      }
+    }
+    .tp {
+      width: 100%;
+      .tp_item {
+        width: 50%;
+        display: inline-flex;
+        vertical-align: top;
+        text-align: center;
+        flex-direction: column;
+        align-items: center;
+        img {
+          width: 80%;
+        }
       }
     }
   }
