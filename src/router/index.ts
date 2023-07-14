@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import EditPage from "../page/editor-page.vue";
+import Editor from "../page/editor.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "home",
-    component: EditPage,
+    component: Editor,
   },
 ];
 
