@@ -7,4 +7,5 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 1099,
   },
+  base: "/vue-fabric-editor",
 });
