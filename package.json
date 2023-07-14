@@ -2,6 +2,7 @@
   "name": "vue-fabric-editor",
   "version": "0.1.0",
   "private": true,
+  "description": "基于fabric.js和Vue的图片、视频编辑器",
   "scripts": {
     "dev": "vite",
     "serve": "vue-cli-service serve",
