@@ -11,15 +11,16 @@
         <slot name="module"></slot>
       </div>
       <div
+        class="material-editor-framework--collapsed"
         :class="[
           !moduleShow || isClose ? 'material-editor-framework-transition' : '',
         ]"
-        :style="`width:${columnWidth.left}px`"
+        :style="{
+          width: `${columnWidth.left}px`,
+          '--width': -columnWidth.left + 'px',
+        }"
       >
-        <div
-          class="material-editor-framework-left"
-          :style="`width:${columnWidth.left}px`"
-        >
+        <div class="material-editor-framework-left">
           <slot name="left"></slot>
         </div>
         <el-tooltip
@@ -28,12 +29,13 @@
           content="关闭侧边栏"
           placement="right"
         >
-          <div
+          <img
+            src="../assets/module-close.svg"
             class="material-editor-framework-close"
-            :style="{ left: columnWidth.left + columnWidth.module + 4 + 'px' }"
             @click="onEditListClose"
-            v-if="columnWidth.left != 0 && !isClose"
-          ></div>
+            v-show="columnWidth.left != 0 && !isClose"
+            alt=""
+          />
         </el-tooltip>
       </div>
       <div
@@ -55,7 +57,7 @@
 </template>
 <script setup lang="ts">
 import { useStore } from "vuex";
-import { computed, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 const DEFAUTL_LEFT_COLUMN_WIDTH = 313;
 const DEFAUTL_RIGHT_COLUMN_WIDTH = 265;
 const DEFAUTL_RIGHT_MODUELE_WIDTH = 72;
@@ -95,8 +97,9 @@ onMounted(() => {
 function setClose(status: boolean) {
   commit("setClose", status);
 }
-function onEditListClose() {
+async function onEditListClose() {
   setClose(true);
+  commit("setActiveModule", null);
 }
 </script>
 <style lang="scss" scoped>
@@ -125,33 +128,34 @@ function onEditListClose() {
     &-close {
       position: absolute;
       top: 50%;
-      margin-top: -50px;
-      z-index: 3;
-      width: 20px;
-      height: 64px;
+      right: 0;
+      z-index: 1;
       cursor: pointer;
-      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAACACAMAAABOb9vcAAAAhFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAADHx8cODg50dHTx8fF2dnZ1dXWWlpZHR0c4ODhQpkZ5AAAAIXRSTlMA9t+/upkRAnPq5NXDfDEsKQjMeGlRThkMsquljTwzIWhBHpjgAAABJElEQVRYw+3YyW7CQBCEYbxig8ELGJyQkJRJyPb+75dj3zy/lD7kMH3+ZEuzSFO1mlZwhjOE2uwhVHJYMygNVwilhz2EUvNaMigledUFoE1anKYAtA9nVRuANpviOQBt0t2ZQSnZ9QxK6Qih9LSGUHkJobYlhGp6CPW4hlAVhckLhMop1InCjEK1FBYU1hSqo/BI4YXCjMIthTWFijDCCB3g7fuO4O1t/rkvQXPz/LUIzX0oAM0tQHOfCkBzC9DcuwLQXACao9Dv1yb9lsek2xaaxMcMH1x6Ff79dY0wwgj/DGv3p2tG4cX9wd55h4rCO/hk3uEs9w6QlXPIbXrfIJ6XrmVBOtJCA1YkXqVLkh1aUgyNk1fV1BxLxzpsuNLKzrME/AWr0ywwvyj83AAAAABJRU5ErkJggg==);
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: 50%;
+      transform: translate(calc(100% - 3px), -50%);
     }
     &-module {
       width: 50px;
       border-right: 1px solid #f1f2f4;
+      z-index: 2;
+      background: white;
+    }
+    &--collapsed {
+      transition: margin-left 0.25s ease;
+      position: relative;
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
     }
     &-transition {
-      width: 0 !important;
       overflow: hidden;
-    }
-    &-anime {
-      transition: width 0.2s ease-in;
+      margin-left: var(--width);
+      z-index: 1;
     }
     &-left {
-      width: 300px;
       height: 100%;
+      width: 100%;
     }
     &-center {
       flex: 1;
+      background: #f6f7f9;
     }
     &-right {
       width: 378px;
