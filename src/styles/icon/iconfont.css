@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4171024 */
-  src: url('iconfont.woff2?t=1689686093483') format('woff2'),
-       url('iconfont.woff?t=1689686093483') format('woff'),
-       url('iconfont.ttf?t=1689686093483') format('truetype');
+  src: url("iconfont.woff2?t=1689686093483") format("woff2"),
+    url("iconfont.woff?t=1689686093483") format("woff"),
+    url("iconfont.ttf?t=1689686093483") format("truetype");
 }
 
 .iconfont {
@@ -228,4 +228,3 @@
 .icon-zitijiacu:before {
   content: "\ec83";
 }
-
