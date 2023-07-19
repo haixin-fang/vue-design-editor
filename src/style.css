@@ -101,7 +101,7 @@ button:focus-visible {
 :before {
   box-sizing: border-box;
 }
-*:not(.dui-scrollbar__container) {
+* {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-color-regular) transparent;
 }

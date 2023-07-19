@@ -66,7 +66,8 @@
     </div>
     <div class="editor-container" ref="container">
       <div class="editor-shell-wrap" ref="shell">
-        <div class="editor-shell"></div>
+        <!-- <div class="editor-shell"></div> -->
+        <slot name="canvas"></slot>
       </div>
     </div>
   </div>
@@ -124,6 +125,9 @@ export default {
 
     function onScroll() {
       const scrollTop = container.value.scrollTop;
+      const scrollLeft = container.value.scrollLeft;
+      guides1.value.scroll(scrollLeft);
+      guides2.value.scrollGuides(scrollLeft);
       guides2.value.scroll(scrollTop);
       guides1.value.scrollGuides(scrollTop);
     }
@@ -159,6 +163,10 @@ export default {
             value <= shellPoi.value.left + shellPoi.value.width
           ) {
             return value - shellPoi.value.left;
+          } else if (value <= shellPoi.value.left) {
+            return Math.abs(value - shellPoi.value.left);
+          } else if (value >= shellPoi.value.left + shellPoi.value.width) {
+            return value - shellPoi.value.width;
           }
         }
 
@@ -174,6 +182,10 @@ export default {
             value >= shellPoi.value.top &&
             value <= shellPoi.value.top + shellPoi.value.height
           ) {
+            return value - shellPoi.value.top;
+          } else if (value <= shellPoi.value.top) {
+            return Math.abs(value - shellPoi.value.top);
+          } else if (value >= shellPoi.value.top + shellPoi.value.height) {
             return value - shellPoi.value.top;
           }
         }
@@ -252,21 +264,19 @@ export default {
     outline: none;
     cursor: image-set(url(https://cdn.dancf.com/fe-assets/img/c7ca2e9….svg) 2x, url(blob:https://www.gaoding.com/ced31cf5-7b1f-40e1-8555-987473b65174) 1x) 6 2, default;
     .editor-shell-wrap {
-      height: 1641px;
-      width: 260px;
-      padding: 24px 40px 120px;
+      // padding: 24px 40px 120px;
       position: relative;
       box-sizing: content-box;
       margin: 0 auto;
       overflow: visible;
-      .editor-shell {
-        height: 1641px;
-        width: 260px;
-        position: relative;
-        margin: 0 auto;
-        background: no-repeat 0 0;
-        box-shadow: 1px 1px 15px #0000001a;
-      }
+      // .editor-shell {
+      //   height: 1641px;
+      //   width: 260px;
+      //   position: relative;
+      //   margin: 0 auto;
+      //   background: no-repeat 0 0;
+      //   box-shadow: 1px 1px 15px #0000001a;
+      // }
     }
   }
 }

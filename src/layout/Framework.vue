@@ -136,13 +136,14 @@ async function onEditListClose() {
     &-module {
       width: 50px;
       border-right: 1px solid #f1f2f4;
-      z-index: 2;
+      z-index: 3;
       background: white;
     }
     &--collapsed {
       transition: margin-left 0.25s ease;
       position: relative;
       border-right: 1px solid rgba(0, 0, 0, 0.08);
+      z-index: 2;
     }
     &-transition {
       overflow: hidden;
@@ -156,6 +157,7 @@ async function onEditListClose() {
     &-center {
       flex: 1;
       background: #f6f7f9;
+      z-index: 1;
     }
     &-right {
       width: 378px;

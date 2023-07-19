@@ -10,7 +10,11 @@
       <resource />
     </template>
     <template #workspace>
-      <workspace />
+      <workspace>
+        <template #canvas>
+          <Canvas :workareaOption="workareaOption" />
+        </template>
+      </workspace>
     </template>
     <template #propsPanel>
       <panel />
@@ -24,4 +28,6 @@ import Resource from "../components/sidebar/resource.vue";
 import Workspace from "../components/workarea/workspace.vue";
 import Panel from "../components/panel/index.vue";
 import Nav from "@/layout/Nav.vue";
+import Canvas from "@/components/workarea/canvas.vue";
+import { workareaOption } from "@/constants/workspace";
 </script>

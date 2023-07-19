@@ -24,7 +24,7 @@ import { ref } from "vue";
 export default {
   setup() {
     const headtool = ref(panel);
-    const type = ref("background");
+    const type = ref("design");
     return {
       headtool,
       getActiveClass(panelItem) {
