@@ -47,7 +47,6 @@ export default {
         (options as any)[name] = props[name];
       }
     });
-    console.log("VUE_PROPERTIES", VUE_PROPERTIES);
     const refs = this.$refs;
     const container = refs.container as HTMLElement;
 

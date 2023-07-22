@@ -24,6 +24,7 @@
     "element-plus": "^2.3.8",
     "fabric": "^5.3.0",
     "framework-utils": "^1.1.0",
+    "lodash-es": "^4.17.21",
     "uuid": "^9.0.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",

@@ -2,6 +2,10 @@
   <div class="main">
     <div class="box" @click="onRestore" ref="box" />
     <div class="ruler horizontal">
+      <!-- :selectedRanges="horRange" -->
+      <!-- :DragPosFormat="DragPosFormat" -->
+      <!-- :textFormat="textFormat" -->
+
       <Guides
         ref="guides1"
         type="horizontal"
@@ -16,16 +20,15 @@
         selectedBackgroundColor="#d9dcdf"
         backgroundColor="#f6f7f9"
         lineColor="#7f8792"
-        :selectedRanges="horRange"
+        :defaultPixelScale="1"
+        :scrollPos="20"
         :selectedRangesText="true"
         textColor="#7f8792"
         selectedRangesTextColor="red"
-        :guidesOffset="shellPoi && shellPoi.top"
-        :DragPosFormat="DragPosFormat"
+        :zoom="shellPoi && shellPoi.zoom"
         markColor="red"
         :segment="2"
-        :textFormat="textFormat"
-        :displayDragPos="true"
+        :displayDragPos="false"
         :rulerStyle="{
           left: '10px',
           width: 'calc(100% - 20px)',
@@ -33,6 +36,9 @@
         }"
       />
     </div>
+    <!-- :selectedRanges="verRange" -->
+    <!-- :textFormat="verTextFormat" -->
+
     <div class="ruler vertical">
       <Guides
         ref="guides2"
@@ -47,15 +53,13 @@
         mainLineSize="50%"
         selectedBackgroundColor="#d9dcdf"
         backgroundColor="#f6f7f9"
-        :guidesOffset="shellPoi && shellPoi.left"
         lineColor="#7f8792"
-        :selectedRanges="verRange"
         :selectedRangesText="true"
         textColor="#7f8792"
         selectedRangesTextColor="red"
-        :textFormat="verTextFormat"
         markColor="red"
-        :segment="2"
+        :zoom="shellPoi && shellPoi.zoom"
+        :segment="1"
         :displayDragPos="true"
         :rulerStyle="{
           top: '20px',
@@ -70,14 +74,19 @@
         <slot name="canvas"></slot>
       </div>
     </div>
+    <div class="edit-bottom">
+      <ScaleBar />
+    </div>
   </div>
 </template>
 <script>
 import Guides from "@/common/guides/index.vue";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, inject, watch } from "vue";
+import ScaleBar from "./scale-bar.vue";
 export default {
   components: {
     Guides,
+    ScaleBar,
   },
   setup() {
     /**
@@ -88,6 +97,33 @@ export default {
     const shell = ref();
     const shellPoi = ref(null);
     const container = ref();
+    const handler = inject("handler");
+    const workspace = computed(() => {
+      const viewportTransform = handler.value?.canvas?.viewportTransform;
+      const workspace = handler.value?.workareaHandler?.workspace;
+      if (viewportTransform && workspace) {
+        return {
+          left: parseInt(viewportTransform[4]),
+          top: parseInt(viewportTransform[5]),
+          zoom: viewportTransform[0],
+          width: workspace.width,
+          height: workspace.height,
+        };
+      }
+      return {
+        left: 0,
+        x: 1,
+        y: 1,
+        top: 0,
+      };
+    });
+    watch(
+      () => workspace,
+      () => {
+        initRuleRange();
+      },
+      { deep: true }
+    );
     onMounted(() => {
       initRuleRange();
       window.addEventListener("resize", onResize);
@@ -117,10 +153,23 @@ export default {
         return [];
       }
     });
+    const diff = computed(() => {
+      if (shellPoi.value) {
+        return (
+          shellPoi.value.width -
+          (shellPoi.value.width * (1 - shellPoi.value.zoom)) / 2
+        );
+      } else {
+        return 0;
+      }
+    });
+
     function onResize() {
       guides1.value.resize();
       guides2.value.resize();
-      initRuleRange();
+      if (workspace.value) {
+        initRuleRange();
+      }
     }
 
     function onScroll() {
@@ -133,12 +182,16 @@ export default {
     }
 
     function initRuleRange() {
-      shellPoi.value = {
-        left: shell.value.offsetLeft + 20,
-        top: shell.value.offsetTop + 4,
-        width: shell.value.offsetWidth - 80,
-        height: shell.value.offsetHeight - 120 - 24,
-      };
+      if (workspace.value) {
+        // 要减去标尺的x,y坐标
+        shellPoi.value = {
+          left: workspace.value.left,
+          top: workspace.value.top,
+          width: workspace.value.width,
+          height: workspace.value.height,
+          zoom: workspace.value.zoom,
+        };
+      }
     }
 
     return {
@@ -278,6 +331,11 @@ export default {
       //   box-shadow: 1px 1px 15px #0000001a;
       // }
     }
+  }
+  .edit-bottom {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
   }
 }
 </style>

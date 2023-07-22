@@ -1,57 +1,162 @@
 import { fabric } from "fabric";
+import { throttle } from "lodash-es";
 import Handler from "./handler";
-import { WorkareaObject } from "@/types/utils";
-class WorkareaHandler {
+import { WorkareaOption } from "@/types/utils";
+
+class EditorWorkspace {
+  canvas: fabric.Canvas;
+  workspaceEl: HTMLElement;
+  workspace: fabric.Rect | null;
+  option: WorkareaOption;
   handler: Handler;
   constructor(handler: Handler) {
     this.handler = handler;
+    this.canvas = handler.canvas;
+    const container = handler.container;
+    if (!container) {
+      throw new Error("element #workspace is missing, plz check!");
+    }
+    this.workspaceEl = container;
+    this.workspace = null;
+    this.option = handler.workareaOption;
     this.initialize();
   }
 
-  initialize = () => {
-    const { workareaOption } = this.handler;
-    const image = new Image(workareaOption.width, workareaOption.height);
-    image.crossOrigin = "Anonymous";
-    image.width = workareaOption.width;
-    image.height = workareaOption.height;
-    this.handler.workarea = new fabric.Image(
-      image,
-      workareaOption
-    ) as WorkareaObject;
-    this.handler.canvas.add(this.handler.workarea);
-    this.initLayout(this.handler.workarea);
-    this.handler.canvas.renderAll();
-  };
+  initialize() {
+    this._initBackground();
+    this._initWorkspace();
+    this._initResizeObserve();
+  }
 
-  initLayout = (workarea: WorkareaObject) => {
-    const { canvas, container } = this.handler;
-    const { width, height } = canvas;
-    const { width: workareaWidth, height: workareaHeight } = workarea as any;
-    // 画布预留些空白 顶部24 左右40 底部120
-    if (width > workareaWidth + 80 && height > workareaHeight + 144) {
-      this.handler.canvas.centerObject(workarea);
-    } else if (width <= workareaWidth + 80 && height > workareaHeight + 144) {
-      this.handler.canvas.centerObjectV(workarea);
-      this.handler.canvas.setWidth(workareaWidth + 80);
-    } else if (width > workareaWidth + 80 && height < workareaHeight + 144) {
-      this.handler.canvas.centerObjectH(workarea);
-      workarea.set({
-        top: 24,
-      });
-      this.handler.canvas.setHeight(workareaHeight + 144);
-    } else if (height < workareaHeight + 144 && width <= workareaWidth + 80) {
-      this.handler.canvas.setHeight(workareaHeight + 144);
-      this.handler.canvas.setWidth(workareaWidth + 80);
-      workarea.set({
-        top: 24,
-        left: 40,
-      });
-    }
-    if (container && container.parentElement) {
-      container.parentElement.style.width = canvas.width + "px";
-      container.parentElement.style.height = canvas.height + "px";
-    }
-  };
+  // 初始化背景
+  _initBackground() {
+    this.canvas.backgroundImage = "";
+    this.canvas
+      .setWidth(this.workspaceEl.offsetWidth)
+      .setHeight(this.workspaceEl.offsetHeight);
+  }
+
+  // 初始化画布
+  _initWorkspace() {
+    const workspace = new fabric.Rect(this.option);
+    this.canvas.add(workspace);
+    this.canvas.renderAll();
+    this.workspace = workspace;
+    this.auto();
+  }
+
+  /**
+   * 设置画布中心到指定对象中心点上
+   * @param {Object} obj 指定的对象
+   */
+  setCenterFromObject(obj: fabric.Rect) {
+    const { canvas } = this;
+    const objCenter = obj.getCenterPoint();
+    const viewportTransform = canvas.viewportTransform;
+    if (
+      canvas.width === undefined ||
+      canvas.height === undefined ||
+      !viewportTransform
+    )
+      return;
+    const ruleWidth = 20; // 标尺宽度
+    viewportTransform[4] =
+      canvas.width / 2 - objCenter.x * viewportTransform[0] + ruleWidth;
+    viewportTransform[5] =
+      canvas.height / 2 - objCenter.y * viewportTransform[3];
+    canvas.setViewportTransform(viewportTransform);
+    canvas.renderAll();
+  }
+
+  // 初始化监听器
+  _initResizeObserve() {
+    const resizeObserver = new ResizeObserver(
+      throttle(() => {
+        this.auto();
+      }, 50)
+    );
+    resizeObserver.observe(this.workspaceEl);
+  }
+
+  setSize(width: number, height: number) {
+    this._initBackground();
+    this.option.width = width;
+    this.option.height = height;
+    // 重新设置workspace
+    this.workspace = this.canvas
+      .getObjects()
+      .find((item) => item.id === "workspace") as fabric.Rect;
+    this.workspace.set("width", width);
+    this.workspace.set("height", height);
+    this.auto();
+  }
+
+  setZoomAuto(scale: number, cb?: (left?: number, top?: number) => void) {
+    const { workspaceEl } = this;
+    const width = workspaceEl.offsetWidth;
+    const height = workspaceEl.offsetHeight;
+    this.canvas.setWidth(width);
+    this.canvas.setHeight(height);
+    const center = this.canvas.getCenter();
+    this.canvas.setViewportTransform(fabric.iMatrix.concat());
+    this.canvas.zoomToPoint(new fabric.Point(center.left, center.top), scale);
+    if (!this.workspace) return;
+    this.setCenterFromObject(this.workspace);
+
+    // 超出画布不展示
+    this.workspace.clone((cloned: fabric.Rect) => {
+      this.canvas.clipPath = cloned;
+      this.canvas.requestRenderAll();
+    });
+    if (cb) cb(this.workspace.left, this.workspace.top);
+  }
+
+  _getScale() {
+    const viewPortWidth = this.workspaceEl.offsetWidth;
+    const viewPortHeight = this.workspaceEl.offsetHeight;
+    // 按照宽度
+    if (
+      viewPortWidth / viewPortHeight <
+      this.option.width / this.option.height
+    ) {
+      return viewPortWidth / this.option.width;
+    } // 按照宽度缩放
+    return viewPortHeight / this.option.height;
+  }
+
+  // 放大
+  big() {
+    let zoomRatio = this.canvas.getZoom();
+    zoomRatio += 0.05;
+    const center = this.canvas.getCenter();
+    this.canvas.zoomToPoint(
+      new fabric.Point(center.left, center.top),
+      zoomRatio
+    );
+  }
+
+  // 缩小
+  small() {
+    let zoomRatio = this.canvas.getZoom();
+    zoomRatio -= 0.05;
+    const center = this.canvas.getCenter();
+    this.canvas.zoomToPoint(
+      new fabric.Point(center.left, center.top),
+      zoomRatio < 0 ? 0.01 : zoomRatio
+    );
+  }
+
+  // 自动缩放
+  auto() {
+    const scale = this._getScale();
+    this.setZoomAuto(scale - 0.08);
+  }
+
+  // 1:1 放大
+  one() {
+    this.setZoomAuto(0.8 - 0.08);
+    this.canvas.requestRenderAll();
+  }
 }
 
-export default WorkareaHandler;
+export default EditorWorkspace;

@@ -12,7 +12,7 @@
     <template #workspace>
       <workspace>
         <template #canvas>
-          <Canvas :workareaOption="workareaOption" />
+          <Canvas :workareaOption="workareaOption" ref="canvas" />
         </template>
       </workspace>
     </template>
@@ -30,4 +30,11 @@ import Panel from "../components/panel/index.vue";
 import Nav from "@/layout/Nav.vue";
 import Canvas from "@/components/workarea/canvas.vue";
 import { workareaOption } from "@/constants/workspace";
+import { ref, onMounted, provide } from "vue";
+const canvas = ref();
+const handler = ref();
+provide("handler", handler);
+onMounted(() => {
+  handler.value = canvas.value?.handler;
+});
 </script>

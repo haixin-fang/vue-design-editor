@@ -16,5 +16,5 @@ export default defineConfig({
       },
     ],
   },
-  base: "/vue-fabric-editor",
+  base: "/vue-design-editor",
 });

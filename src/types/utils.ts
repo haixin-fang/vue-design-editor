@@ -15,12 +15,12 @@ export interface WorkareaOption {
    * 工作区默认宽度
    * @type {number}
    */
-  width?: number;
+  width: number;
   /**
    * 工作区默认高度
    * @type {number}
    */
-  height?: number;
+  height: number;
   /**
    * 工作区背景图
    * @type {string}

@@ -15,7 +15,7 @@ export const modulelist = [
   {
     type: "text",
     text: "文字",
-    drag: true,
+    drag: false,
     icon: "icon-wenzi",
     options: {
       type: "FontCustom",
@@ -43,7 +43,7 @@ export const modulelist = [
   {
     type: "qrcode",
     text: "二维码",
-    drag: true,
+    drag: false,
     icon: "icon-erweima",
   },
 ];

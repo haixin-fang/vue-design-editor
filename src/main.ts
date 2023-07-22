@@ -8,10 +8,14 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import "./style.css";
 import "./styles/index.scss";
 
-createApp(App)
+import Popover from "@/common/popover.vue";
+const app = createApp(App);
+
+app
   .use(store)
   .use(router)
   .use(ElementPlus, {
     locale: zhCn,
   })
+  .component("popover", Popover)
   .mount("#app");

@@ -49,6 +49,7 @@ export default {
     return {
       id,
       parentCanvas,
+      handler,
     };
   },
 };
