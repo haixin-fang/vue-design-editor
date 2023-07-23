@@ -351,6 +351,19 @@
   --background-color-primary-active: var(--color-gray-200);
   --background-color-primary-hover: var(--color-gray-100);
   --background-color-primary-regular: var(--color-gray-0);
+
+  --text-p3-bold: var(--font-weight-bold) var(--font-size-20) /
+    var(--line-height-medium) var(--font-family-body);
+  --text-p3-regular: var(--font-weight-regular) var(--font-size-20) /
+    var(--line-height-medium) var(--font-family-body);
+  --text-p2-bold: var(--font-weight-bold) var(--font-size-50) /
+    var(--line-height-medium) var(--font-family-body);
+  --text-p2-regular: var(--font-weight-regular) var(--font-size-50) /
+    var(--line-height-medium) var(--font-family-body);
+  --text-p1-bold: var(--font-weight-bold) var(--font-size-100) /
+    var(--line-height-medium) var(--font-family-body);
+  --text-p1-regular: var(--font-weight-regular) var(--font-size-100) /
+    var(--line-height-medium) var(--font-family-body);
 }
 
 :root {

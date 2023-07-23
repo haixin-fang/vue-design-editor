@@ -108,14 +108,12 @@ const setSlotRef = (dom) => {
 };
 </script>
 <style lang="scss" scoped>
-.fade-enter-from {
-  transform: scale(0);
-  opacity: 0;
-}
+.fade-enter-from,
 .fade-leave-to {
   transform: scale(0);
   opacity: 0;
 }
+
 .fade-enter-to,
 .fade-leave-from {
   transform: scale(1);
