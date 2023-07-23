@@ -1,13 +1,11 @@
 <template>
   <teleport :to="to">
-    <transition name="appear">
+    <transition name="fade">
       <div class="gda-popover" ref="popover" v-show="show">
         <div class="gda-popover-content">
           <div class="gda-popover-arrow" v-if="arrow"></div>
           <div class="gda-popover-inner">
-            <transition name="appear">
-              <slot :setSlotRef="setSlotRef" />
-            </transition>
+            <slot :setSlotRef="setSlotRef" />
           </div>
         </div>
       </div>
@@ -38,7 +36,6 @@ const props = defineProps({
 let el = null,
   resizeObserver = null;
 const popover = ref();
-const slots = useSlots();
 
 watch(
   () => props.show,
@@ -73,35 +70,67 @@ function init() {
     props.dom?.getBoundingClientRect();
   const { offsetWidth, offsetHeight } = el;
   let popoverTop = 0,
-    popoverLeft = 0;
+    popoverLeft = 0,
+    originX = 0,
+    originY = 0;
   if (top > offsetHeight + 10) {
     popoverTop = top - offsetHeight - 10;
+    originY = offsetHeight + 10;
     // 向上展示
     if (offsetWidth < right) {
       // 默认向右上角
       popoverLeft = left + width - offsetWidth;
+      originX = offsetWidth;
     } else {
       popoverLeft = left;
+      originX = 0;
     }
   } else if (bottom > offsetHeight + 10) {
     popoverTop = top + height + 10;
+    originY = 10;
     // 向下展示
     if (offsetWidth < right) {
       // 默认向右下角
       popoverLeft = left + width - offsetWidth;
+      originX = offsetWidth;
     } else {
       popoverLeft = left;
+      originX = 0;
     }
   }
   popover.value.style.left = popoverLeft + "px";
   popover.value.style.top = popoverTop + "px";
+  popover.value.style.transformOrigin = `${originX}px ${originY}px`;
 }
 
 const setSlotRef = (dom) => {
   el = dom;
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.fade-enter-from {
+  transform: scale(0);
+  opacity: 0;
+}
+.fade-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.fade-leave-active,
+.fade-enter-active {
+  transition: opacity, transform 0.2s cubic-bezier(0.08, 0.82, 0.17, 1);
+}
+
+.fade-leave-active {
+  transition: all 0.2s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+}
+
 .gda-popover {
   box-sizing: border-box;
   margin: 0;
@@ -119,6 +148,7 @@ const setSlotRef = (dom) => {
   font-weight: 400;
   white-space: normal;
   text-align: left;
+  transform-origin: center center;
   cursor: auto;
   .gda-popover-arrow {
     right: 16px;
