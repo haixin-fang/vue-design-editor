@@ -85,7 +85,7 @@ class EditorWorkspace {
     // 重新设置workspace
     this.workspace = this.canvas
       .getObjects()
-      .find((item) => item.id === "workspace") as fabric.Rect;
+      .find((item: any) => item.id === "workspace") as fabric.Rect;
     this.workspace.set("width", width);
     this.workspace.set("height", height);
     this.auto();

@@ -315,7 +315,6 @@ export default {
     color: #333;
     background: none;
     outline: none;
-    cursor: image-set(url(https://cdn.dancf.com/fe-assets/img/c7ca2e9….svg) 2x, url(blob:https://www.gaoding.com/ced31cf5-7b1f-40e1-8555-987473b65174) 1x) 6 2, default;
     .editor-shell-wrap {
       // padding: 24px 40px 120px;
       position: relative;

@@ -75,7 +75,7 @@
       </div>
     </div>
     <transition name="anime">
-      <workspace-size v-if="sizeShow" />
+      <workspace-size v-if="sizeShow" @back="sizeShow = false" />
     </transition>
   </div>
 </template>

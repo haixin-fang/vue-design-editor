@@ -19,6 +19,7 @@
     "commit": "git-cz"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "@scena/guides": "^0.28.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.3.8",

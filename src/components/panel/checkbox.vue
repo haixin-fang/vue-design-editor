@@ -9,16 +9,15 @@
       <input
         type="checkbox"
         :id="'toggle' + '_' + typeKey"
-        v-model="initValue[typeKey]"
-        @change="$emit('change', initValue)"
+        v-model="newValue"
       />
       <label
         :for="'toggle' + '_' + typeKey"
         class="switch"
         :class="[
           className,
-          initValue[typeKey] ? 'switch-active' : '',
-          initValue[typeKey] ? activeName : '',
+          newValue ? 'switch-active' : '',
+          newValue ? activeName : '',
           disabled ? 'switch-disabeld' : '',
         ]"
       >
@@ -27,44 +26,52 @@
     </div>
   </el-tooltip>
 </template>
-<script>
-export default {
-  props: {
-    className: {
-      type: String,
-      default: "",
-    },
-    initValue: {
-      type: Object,
-      default: () => ({}),
-    },
-    typeKey: {
-      type: String,
-      default: "",
-    },
-    content: {
-      type: String,
-      default: "",
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    // 激活类
-    activeName: {
-      type: String,
-      default: "",
-    },
-    effect: {
-      type: String,
-      default: "dark",
-    },
-    placement: {
-      type: String,
-      default: "bottom",
-    },
+<script setup>
+import { defineProps, computed, useAttrs } from "vue";
+const { emit } = useAttrs();
+const props = defineProps({
+  className: {
+    type: String,
+    default: "",
   },
-};
+  initValue: {
+    type: Object,
+    default: () => ({}),
+  },
+  typeKey: {
+    type: String,
+    default: "",
+  },
+  content: {
+    type: String,
+    default: "",
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  // 激活类
+  activeName: {
+    type: String,
+    default: "",
+  },
+  effect: {
+    type: String,
+    default: "dark",
+  },
+  placement: {
+    type: String,
+    default: "bottom",
+  },
+});
+const newValue = computed({
+  get() {
+    return props.initValue[props.typeKey];
+  },
+  set(value) {
+    emit("change", value);
+  },
+});
 </script>
 <style lang="scss" scoped>
 .common-checkbox {
