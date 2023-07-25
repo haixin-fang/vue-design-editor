@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4171024 */
-  src: url("iconfont.woff2?t=1690106120882") format("woff2"),
-    url("iconfont.woff?t=1690106120882") format("woff"),
-    url("iconfont.ttf?t=1690106120882") format("truetype");
+  src: url('iconfont.woff2?t=1690246795274') format('woff2'),
+       url('iconfont.woff?t=1690246795274') format('woff'),
+       url('iconfont.ttf?t=1690246795274') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-link-outline:before {
+  content: "\e9d2";
+}
+
+.icon-unlink-outline:before {
+  content: "\ea38";
 }
 
 .icon-fuzhi:before {
@@ -232,3 +240,4 @@
 .icon-zitijiacu:before {
   content: "\ec83";
 }
+

@@ -143,7 +143,7 @@ export default {
     > i,
     > div {
       width: 100%;
-      font-size: 20px;
+      // font-size: 20px;
       display: flex;
       justify-content: center;
     }

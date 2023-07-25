@@ -1,5 +1,4 @@
 import { fabric } from "fabric";
-import { throttle } from "lodash-es";
 import Handler from "./handler";
 import { WorkareaOption } from "@/types/utils";
 
@@ -70,11 +69,9 @@ class EditorWorkspace {
 
   // 初始化监听器
   _initResizeObserve() {
-    const resizeObserver = new ResizeObserver(
-      throttle(() => {
-        this.auto();
-      }, 50)
-    );
+    const resizeObserver = new ResizeObserver(() => {
+      this.auto();
+    });
     resizeObserver.observe(this.workspaceEl);
   }
 

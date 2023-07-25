@@ -1,5 +1,6 @@
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-body: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB",
+    "WenQuanYi Micro Hei", Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
@@ -10,11 +11,14 @@
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  font-family: var(--font-family-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
 :root {
+  --dropdown-color-regular: var(--text-color-primary);
+  --dropdown-color-checked: var(--text-color-primary);
   --text-color-success: var(--color-green-600);
   --text-color-warning: var(--color-orange-600);
   --text-color-error: var(--color-red-600);

@@ -9,52 +9,106 @@
       <div class="header_toolbar">
         <div class="custom-size">
           <div class="input-number-group">
-            <div class="dinput-number" type="number">
-              <el-input v-model="input" />
+            <div class="input-number" type="number">
+              <el-input v-model="width" />
             </div>
-            <div class="dinput-number" type="number">
-              <el-input v-model="input" />
+            <div class="input-number" type="number">
+              <el-input v-model="height" />
             </div>
-            <div class="dui-input-number-group__suffix">
-              <button
-                type="button"
-                class="gda-btn gda-btn-action gda-btn-sm gda-btn-icon-only dbu-resize-panel__ratio-action"
+            <div class="input-number-group__suffix">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="锁定宽高比"
+                placement="top"
               >
-                <svg
-                  role="img"
-                  aria-label="link-unlink"
-                  focusable="false"
-                  data-icon="link-unlink"
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="gd_design_icon gd_design_icon-link-unlink"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M14 8.5H17C18.933 8.5 20.5 10.067 20.5 12C20.5 13.933 18.933 15.5 17 15.5H14V17L17 17C19.7614 17 22 14.7614 22 12C22 9.23858 19.7614 7 17 7H14V8.5ZM10 8.5V7L7 7C4.23858 7 2 9.23858 2 12C2 14.7614 4.23858 17 7 17H10V15.5H7C5.067 15.5 3.5 13.933 3.5 12C3.5 10.067 5.067 8.5 7 8.5L10 8.5Z"
-                    fill="currentColor"
-                  ></path>
-                </svg>
-              </button>
+                <button type="button">
+                  <i class="iconfont icon-link-outline"></i>
+                </button>
+              </el-tooltip>
             </div>
           </div>
-          <button type="button" class="btn-px">
-            <span class="dbu-resize-panel__unit-select__text">px</span
-            ><el-icon><ArrowUp /></el-icon>
-            <el-icon><ArrowDown /></el-icon>
-          </button>
+          <el-popover
+            placement="bottom-start"
+            popper-class="unit-menu"
+            :width="200"
+            :offset="2"
+            trigger="hover"
+            :show-arrow="false"
+          >
+            <template #reference>
+              <button type="button" class="btn-px">
+                <span class="dbu-resize-panel__unit-select__text">px</span
+                ><el-icon :size="12"><ArrowUp /></el-icon>
+                <!-- <el-icon><ArrowDown /></el-icon> -->
+              </button>
+            </template>
+            <template #default>
+              <div class="unit-menu-list">
+                <div class="unit-menu-item">
+                  <div class="unit-menu-item-select">
+                    px&nbsp;&nbsp;(像素)
+                    <el-icon style="width: 1em; height: 1em"
+                      ><Select
+                    /></el-icon>
+                  </div>
+                </div>
+                <div class="unit-menu-item">
+                  <div>cm&nbsp;&nbsp;(厘米)</div>
+                </div>
+                <div class="unit-menu-item">
+                  <div>mm&nbsp;&nbsp;(毫米)</div>
+                </div>
+              </div>
+            </template>
+          </el-popover>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ArrowLeft, ArrowUp, ArrowDown } from "@element-plus/icons-vue";
+import { ref } from "vue";
+import { ArrowLeft, ArrowUp, ArrowDown, Select } from "@element-plus/icons-vue";
+const width = ref();
+const height = ref();
 </script>
+<style lang="scss">
+.unit-menu {
+  padding: 0 !important;
+}
+</style>
 <style lang="scss" scoped>
+.unit-menu-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  .unit-menu-item {
+    min-height: var(--dropdown-height-loose);
+    clear: both;
+    padding: 10px 12px;
+    color: var(--dropdown-color-regular);
+    font-weight: var(--font-weight-regular);
+    font-size: var(--font-size-medium);
+    line-height: 20px;
+    white-space: nowrap;
+    position: relative;
+    cursor: pointer;
+    cursor: pointer;
+    border-radius: 8px;
+
+    .unit-menu-item-select {
+      font: var(--text-p1-bold);
+      color: var(--dropdown-color-checked);
+      .el-icon {
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}
 .workspace-size {
   position: absolute;
   top: 0;
@@ -63,6 +117,7 @@ import { ArrowLeft, ArrowUp, ArrowDown } from "@element-plus/icons-vue";
   height: 100%;
   background: white;
   z-index: 2;
+
   .header {
     .header_back {
       height: 40px;
@@ -100,14 +155,95 @@ import { ArrowLeft, ArrowUp, ArrowDown } from "@element-plus/icons-vue";
         align-items: center;
         padding: 4px 4px 4px 8px;
         background-color: var(--background-color-primary-regular);
-        box-shadow: 0 0 0 1px var(--border-color-primary-regular) inset;
+        box-shadow: 0 0 0 1px #e8eaec inset;
+        font: var(--text-p1-regular);
+        color: var(--text-color-primary);
+        .el-input {
+          ::v-deep {
+            .el-input__wrapper {
+              box-shadow: none;
+              .el-input__inner {
+                color: inherit;
+              }
+            }
+          }
+        }
+        .input-number {
+          position: relative;
+          width: 54px;
+        }
+        .input-number + .input-number {
+          ::before {
+            position: absolute;
+            top: 50%;
+            left: -12px;
+            width: 1px;
+            height: 16px;
+            background-color: rgba(0, 0, 0, 0.08);
+            content: "";
+            transform: translateY(-50%);
+          }
+          margin-left: 20px;
+        }
+        .input-number-group__suffix {
+          margin-left: 8px;
+          button {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-250);
+            background: #e8eaec;
+            border-radius: var(--border-radius-medium);
+            outline: 0;
+            border: none;
+            &:active {
+              outline: 0;
+              border: none;
+            }
+          }
+        }
       }
       .custom-size {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin: 12px 0 8px;
+        padding: 0 16px;
+
         .btn-px {
+          display: flex;
+          flex: 0 0 54px;
+          align-items: center;
+          justify-content: center;
+          height: 32px;
+          padding: 0;
+          margin-left: 4px;
+          font: var(--text-p1-regular);
+          border-radius: var(--border-radius-medium);
+          color: var(--text-color-primary);
+          background-color: var(--color-transparent-regular);
+          border-color: transparent;
+          outline: 0;
+          border: none;
+          span {
+            display: inline-flex;
+            pointer-events: none;
+            line-height: 1;
+            width: 24px;
+            margin-right: 4px;
+          }
+          &:active {
+            outline: 0;
+            border: none;
+          }
+          &:hover {
+            color: var(--text-color-primary);
+            background-color: rgba(0, 0, 0, 0.04);
+            border-color: transparent;
+          }
         }
       }
     }
