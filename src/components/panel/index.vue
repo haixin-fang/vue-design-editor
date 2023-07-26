@@ -147,8 +147,7 @@ export default {
       scrollbar-width: none;
       cursor: default;
       .panel-block {
-        margin-top: 8px;
-        margin-top: 8px;
+        margin-bottom: 16px;
         &:after {
           display: block;
           width: auto;
@@ -245,6 +244,11 @@ export default {
                   outline: 0;
                   font-size: 14px;
                   border-radius: var(--border-radius-large);
+                  &:hover {
+                    color: #222529;
+                    background-color: #e8eaec;
+                    border-color: rgba(0, 0, 0, 0);
+                  }
                 }
               }
             }

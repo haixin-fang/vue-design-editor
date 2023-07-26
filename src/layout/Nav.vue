@@ -2,12 +2,12 @@
   <div class="header_nav">
     <div class="logo"></div>
     <div class="starfish-link">
-      <!-- <a
-        href="https://github.com/haixin-fang/vue-fabric-editor"
+      <a
+        href="https://github.com/haixin-fang/vue-design-editor"
         target="_black"
       >
         <i class="iconfont icon-GitHub"></i
-      ></a> -->
+      ></a>
     </div>
   </div>
 </template>

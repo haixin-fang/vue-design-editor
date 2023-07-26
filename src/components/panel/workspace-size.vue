@@ -1,6 +1,6 @@
 <template>
   <div class="workspace-size">
-    <div class="header">
+    <div class="size-header">
       <div class="header_back" @click="$emit('back')">
         <ArrowLeft style="width: 16px; height: 16px" />
         <span>调整尺寸</span>
@@ -65,11 +65,32 @@
         </div>
       </div>
     </div>
+    <div class="size-body">
+      <div class="size-list">
+        <div class="size-item size-item-select">
+          <el-icon style="width: 1em; height: 1em"><Select /></el-icon>
+          <div class="size-name">自定义尺寸</div>
+        </div>
+        <div class="size-item" v-for="(item, index) in sizeList" :key="index">
+          <el-icon style="width: 1em; height: 1em" v-show="false"
+            ><Select
+          /></el-icon>
+          <div class="size-name">{{ item.title }}</div>
+          <div class="size-info">
+            <span>{{ item.material.width }}</span
+            ><span class="m03">×</span><span>{{ item.material.height }}</span
+            ><span class="m03">{{ item.material.unit }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
 import { ref } from "vue";
 import { ArrowLeft, ArrowUp, ArrowDown, Select } from "@element-plus/icons-vue";
+import { size } from "@/constants/size";
+const sizeList = ref(size);
 const width = ref();
 const height = ref();
 </script>
@@ -117,8 +138,10 @@ const height = ref();
   height: 100%;
   background: white;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
 
-  .header {
+  .size-header {
     .header_back {
       height: 40px;
       line-height: 40px;
@@ -243,6 +266,52 @@ const height = ref();
             color: var(--text-color-primary);
             background-color: rgba(0, 0, 0, 0.04);
             border-color: transparent;
+          }
+        }
+      }
+    }
+  }
+  .size-body {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    overflow: auto;
+    scrollbar-width: none;
+    cursor: default;
+    .size-list {
+      padding: 12px 16px 6px;
+      margin: 0;
+      .size-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        padding-left: 30px;
+        border-radius: var(--border-radius-large);
+        cursor: pointer;
+        &.size-item-select {
+          background-color: #f0f6ff;
+        }
+        &:hover {
+          background-color: #f6f7f9;
+        }
+        .el-icon {
+          position: absolute;
+          left: 4px;
+        }
+        .size-name {
+          margin-right: 12px;
+          overflow: hidden;
+          font: var(--text-p1-regular);
+          color: var(--text-color-primary);
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .size-info {
+          font: var(--text-p2-regular);
+          color: var(--text-color-disabled);
+          .m02 {
+            margin: 0 4px;
           }
         }
       }

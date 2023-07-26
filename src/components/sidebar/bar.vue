@@ -92,9 +92,9 @@ export default {
     > i {
       display: block;
       margin: 0 auto 6px;
-      font-size: 22px;
-      font-weight: 500;
-      color: #070707;
+      font-size: 24px;
+      font-weight: bold;
+      color: #222529;
     }
     // &::before {
     //   content: "";

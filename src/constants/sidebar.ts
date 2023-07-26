@@ -1,5 +1,11 @@
 export const modulelist = [
   {
+    type: "add",
+    text: "添加",
+    drag: false,
+    icon: "icon-tianjia",
+  },
+  {
     type: "template",
     text: "模板",
     drag: false,
@@ -16,7 +22,7 @@ export const modulelist = [
     type: "text",
     text: "文字",
     drag: false,
-    icon: "icon-wenzi",
+    icon: "icon-text",
     options: {
       type: "FontCustom",
       text: "",
@@ -30,7 +36,7 @@ export const modulelist = [
     type: "background",
     text: "背景",
     drag: false,
-    icon: "icon-background",
+    icon: "icon-editor-background",
     fileType: ["jpg", "png", "gif", "svg"],
   },
   {
@@ -44,6 +50,6 @@ export const modulelist = [
     type: "qrcode",
     text: "二维码",
     drag: false,
-    icon: "icon-erweima",
+    icon: "icon-erweima1",
   },
 ];
