@@ -16,8 +16,8 @@
   height: 60px;
   display: flex;
   align-items: center;
-  -webkit-box-shadow: 0 2px 10px rgb(70 160 252 / 60%);
-  box-shadow: 0 2px 10px rgb(70 160 252 / 60%);
+  // -webkit-box-shadow: 0 2px 10px rgb(70 160 252 / 60%);
+  // box-shadow: 0 2px 10px rgb(70 160 252 / 60%);
   padding: 0 10px;
   position: relative;
   border-bottom: 1px solid #d8dee8;

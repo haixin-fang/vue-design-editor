@@ -455,25 +455,25 @@ button:focus-visible {
 :before {
   box-sizing: border-box;
 }
-* {
+*:not(.page-scrollbar_container) {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-color-regular) transparent;
 }
 
-*::-webkit-scrollbar {
+*:not(.page-scrollbar_container)::-webkit-scrollbar {
   width: calc(var(--scrollbar-width-regular) + 4px * 2) !important;
   height: calc(var(--scrollbar-width-regular) + 4px * 2) !important;
 }
 
-*::-webkit-scrollbar {
+*:not(.page-scrollbar_container)::-webkit-scrollbar {
   background: transparent;
 }
 
-*:hover::-webkit-scrollbar-thumb {
+*:not(.page-scrollbar_container):hover::-webkit-scrollbar-thumb {
   background: var(--scrollbar-color-regular);
 }
 
-*::-webkit-scrollbar-thumb {
+*:not(.page-scrollbar_container)::-webkit-scrollbar-thumb {
   background-clip: padding-box !important;
   border: 4px solid transparent !important;
   border-radius: calc(var(--scrollbar-width-regular) + 4px * 2) !important;
@@ -483,6 +483,11 @@ button:focus-visible {
   background: var(--scrollbar-color-hover);
 }
 
-*::-webkit-scrollbar-corner {
+*:not(.page-scrollbar_container)::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+.page-scrollbar_container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }

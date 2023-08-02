@@ -67,7 +67,6 @@ export default {
   .module-aside-button {
     text-align: center;
     position: relative;
-    padding: 12px 0;
     font-size: 12px;
     font-weight: 500;
     line-height: 17px;
@@ -76,10 +75,15 @@ export default {
     background: #fff;
     border: none;
     outline: none;
-    width: 90%;
+    width: 56px;
+    height: 66px;
     cursor: pointer;
     word-break: break-all;
     user-select: none;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     margin: 4px;
     &:hover {
       background: #f1f2f4;
@@ -89,9 +93,13 @@ export default {
       background: #e8eaec;
       color: #222529;
     }
+    span {
+      white-space: nowrap;
+    }
     > i {
       display: block;
-      margin: 0 auto 6px;
+      // margin: 0 auto 6px;
+      margin-bottom: 4px;
       font-size: 24px;
       font-weight: bold;
       color: #222529;
