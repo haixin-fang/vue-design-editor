@@ -158,6 +158,7 @@ async function onEditListClose() {
       flex: 1;
       background: #f6f7f9;
       z-index: 1;
+      position: relative;
     }
     &-right {
       width: 378px;

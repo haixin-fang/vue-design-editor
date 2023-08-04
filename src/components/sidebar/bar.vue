@@ -32,6 +32,12 @@ export default {
     function setActiveModule(module) {
       commit("setActiveModule", module);
     }
+    list.value.find((item) => {
+      if (item.show) {
+        setActiveModule(item);
+        setClose(false);
+      }
+    });
     return {
       modulelist: list,
       activeModule,

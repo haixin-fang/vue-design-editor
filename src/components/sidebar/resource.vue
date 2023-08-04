@@ -24,17 +24,87 @@
         </div>
       </div>
     </div>
+    <div class="material" v-if="activeModule.type == 'Image'">
+      <div class="nav-container">
+        <div class="navlist">
+          <div class="navItem">全部</div>
+          <div
+            class="navItem"
+            v-for="item in materialList.slice(0, 4)"
+            :key="item.id"
+          >
+            {{ item.title }}
+          </div>
+          <el-dropdown
+            v-if="materialList.length > 4"
+            class="navItem"
+            popper-class="navItem"
+            trigger="click"
+            :teleported="false"
+          >
+            <span class="el-dropdown-link">
+              更多
+              <el-icon class="el-icon--right">
+                <arrow-down />
+              </el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  v-for="item in materialList.slice(4)"
+                  :key="item.id"
+                  >{{ item.title }}</el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+      </div>
+      <div class="material-container page-scrollbar_container">
+        <div class="panel-block" v-for="item in materialList" :key="item.id">
+          <panel-block
+            :title="item.title"
+            subTitle="查看更多"
+            @change="onChange(item)"
+          />
+          <div class="panel-content">
+            <div class="panel-batch">
+              <div
+                class="material-detail"
+                v-for="i in getIndex(item.interval).slice(0, 8)"
+                :key="i"
+              >
+                <img :src="`${repoSrc}svg/${i}.svg`" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
-import { computed, shallowRef } from "vue";
+import { computed, shallowRef, ref } from "vue";
 import { useStore } from "vuex";
 import { addTab } from "@/constants/addtab";
+import material from "@/constants/material";
+import { ArrowDown } from "@element-plus/icons-vue";
+import PanelBlock from "@/common/panel-block.vue";
 const { state } = useStore();
+const repoSrc = ref("https://haixin-fang.github.io/vue-design-editor-static/");
 const activeModule = computed(() => {
   return state.activeModule;
 });
 const addData = shallowRef(addTab);
+const materialList = shallowRef(
+  material.map((item, index) => ({ ...item, id: index }))
+);
+function onChange(item) {}
+
+const getIndex = ([start, end]) => {
+  const arr = Array(end - (start - 1)).fill("");
+  return arr.map((item, i) => i + start);
+};
 </script>
 <style lang="scss" scoped>
 .resource-station__panel {
@@ -116,6 +186,95 @@ const addData = shallowRef(addTab);
                 white-space: nowrap;
               }
             }
+          }
+        }
+      }
+    }
+  }
+  .material {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    .nav-container {
+      padding: 16px;
+      .navlist {
+        display: flex;
+        flex-wrap: wrap;
+        .navItem {
+          color: var(--actionbutton-color-regular);
+          background-color: #f1f2f4;
+          border-color: rgba(0, 0, 0, 0);
+          font-weight: 400;
+          height: 32px;
+          padding: 0 12px;
+          font-size: 14px;
+          border-radius: var(--border-radius-medium);
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          text-align: center;
+          background-image: none;
+          border-color: transparent;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          user-select: none;
+          touch-action: manipulation;
+          vertical-align: middle;
+          margin-bottom: 4px;
+          margin-left: 4px;
+          &:hover {
+            color: #222529;
+            background-color: #e8eaec;
+            border-color: rgba(0, 0, 0, 0);
+          }
+          .el-icon {
+            margin-left: 0;
+          }
+        }
+      }
+    }
+    .material-container {
+      flex: 1;
+      width: 100%;
+      overflow: auto;
+      .panel-content {
+        display: flex;
+        flex: 1;
+        flex-grow: 1;
+        align-items: center;
+        width: 100%;
+        font: var(--text-p1-regular);
+        color: var(--text-color-primary);
+        min-height: 40px;
+        padding: 0 16px;
+        margin: 8px 0 16px;
+        .panel-batch {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          padding: 4px;
+          background: #f1f2f4;
+          border-radius: var(--border-radius-large);
+        }
+        .material-detail {
+          margin: 4px;
+          border-radius: 8px;
+          width: 60px;
+          height: 60px;
+          background: rgb(241, 242, 244);
+          transition: all 0.1s ease-in;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+          &:hover {
+            background-color: rgb(232, 234, 236);
           }
         }
       }
