@@ -72,7 +72,7 @@
               @change="onChange(item)"
             />
             <div class="panel-content">
-              <div class="panel-batch">
+              <div class="panel-batch" v-if="item.interval">
                 <div
                   class="material-detail"
                   v-for="i in getIndex(item.interval).slice(0, 8)"
@@ -81,22 +81,47 @@
                   <el-image :src="`${repoSrc}svg/${i}.svg`" lazy></el-image>
                 </div>
               </div>
+              <div class="panel-batch" v-else>
+                <div
+                  class="material-detail"
+                  style="width: 60px; height: 60px"
+                  v-for="(item, index) in icons.slice(0, 8)"
+                  :key="index"
+                >
+                  <el-image :src="item.url" lazy></el-image>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <transition name="anime">
           <div class="detail-list page-scrollbar_container" v-if="selectItem">
-            <div
-              class="detail-item"
-              v-for="item in getIndex(selectItem.interval)"
-              :key="item"
-            >
-              <el-image
-                style="width: 88px; height: 88px"
-                :src="`${repoSrc}svg/${item}.svg`"
-                lazy
-              ></el-image>
-            </div>
+            <template v-if="selectItem.interval">
+              <div
+                class="detail-item"
+                v-for="item in getIndex(selectItem.interval)"
+                :key="item"
+              >
+                <el-image
+                  style="width: 88px; height: 88px"
+                  :src="`${repoSrc}svg/${item}.svg`"
+                  lazy
+                ></el-image>
+              </div>
+            </template>
+            <template v-else>
+              <div
+                class="detail-item"
+                v-for="(item, index) in icons"
+                :key="index"
+              >
+                <el-image
+                  style="width: 88px; height: 88px"
+                  :src="item.url"
+                  lazy
+                ></el-image>
+              </div>
+            </template>
           </div>
         </transition>
       </div>
@@ -116,11 +141,17 @@ const selectItem = ref();
 const activeModule = computed(() => {
   return state.activeModule;
 });
+
+const icons = computed(() => {
+  return state.icons;
+});
+
 const addData = shallowRef(addTab);
 const materialList = shallowRef(
   material.map((item, index) => ({ ...item, id: index }))
 );
 function onChange(item) {
+  debugger;
   selectItem.value = item;
 }
 

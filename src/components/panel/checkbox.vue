@@ -94,7 +94,7 @@ input {
   justify-content: center;
   &.switch-active {
     color: #2354f4;
-    ::v-deep svg {
+    :deep(svg) {
       fill: #2354f4 !important;
       path {
         fill: #2354f4 !important;

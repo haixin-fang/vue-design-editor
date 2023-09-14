@@ -35,7 +35,7 @@ export const modulelist = [
   },
   {
     type: "background",
-    text: "背景",
+    text: "图片",
     drag: false,
     icon: "icon-editor-background",
     fileType: ["jpg", "png", "gif", "svg"],

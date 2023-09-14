@@ -110,7 +110,7 @@ export default {
   align-items: center;
 
   .icon_noactive {
-    ::v-deep .switch {
+    :deep(.switch) {
       color: #bec3c9;
       cursor: not-allowed;
       font-size: 20px;

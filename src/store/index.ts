@@ -7,6 +7,7 @@ export default createStore({
     activeModule: null,
     materialList: [],
     loadOk: false,
+    icons: [],
   },
   getters: {},
   mutations: {
@@ -20,13 +21,40 @@ export default createStore({
       state.loadOk = true;
       state.materialList = value;
     },
+    COMMIT_ICONS(state, value) {
+      state.icons = value;
+    },
   },
   actions: {
     getMaterial({ commit }) {
-      request({
-        url: "https://haixin-fang.github.io/vue-design-editor-static/imglist.json",
-      }).then((res) => {
-        commit("Ok", res);
+      const pro = [];
+      pro.push(
+        request({
+          url: "https://haixin-fang.github.io/vue-design-editor-static/imglist.json",
+        }).catch((e) => console.error(e))
+      );
+      pro.push(
+        request({
+          url: "https://haixin-fang.github.io/icons/bootstrap-icons.json",
+        }).catch((e) => console.error(e))
+      );
+      Promise.all(pro).then((data) => {
+        if (Array.isArray(data)) {
+          if (data[0]) {
+            commit("Ok", data[0]);
+          }
+          if (data[1]) {
+            const values = Object.keys(data[1]);
+            const icons: any = [];
+            values.forEach((item) => {
+              const url = `https://haixin-fang.github.io/icons/icons/${item}.svg`;
+              icons.push({
+                url,
+              });
+            });
+            commit("COMMIT_ICONS", icons);
+          }
+        }
       });
     },
   },

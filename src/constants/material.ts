@@ -1,5 +1,8 @@
 export default [
   {
+    title: "icons",
+  },
+  {
     title: "卡通",
     interval: [460, 489],
   },

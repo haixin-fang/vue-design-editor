@@ -182,12 +182,10 @@ const height = ref();
         font: var(--text-p1-regular);
         color: var(--text-color-primary);
         .el-input {
-          ::v-deep {
-            .el-input__wrapper {
-              box-shadow: none;
-              .el-input__inner {
-                color: inherit;
-              }
+          :deep(.el-input__wrapper) {
+            box-shadow: none;
+            .el-input__inner {
+              color: inherit;
             }
           }
         }
