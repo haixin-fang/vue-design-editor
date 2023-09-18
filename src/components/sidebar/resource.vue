@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="material" v-if="activeModule.type == 'Image'">
+    <div class="material" v-if="activeModule.type == 'materail'">
       <div class="nav-container">
         <div class="navlist">
           <div class="navItem" @click="selectItem = null">全部</div>
@@ -126,6 +126,17 @@
         </transition>
       </div>
     </div>
+    <div class="Image" v-if="activeModule.type == 'Image'">
+      <Waterifall :list="imageList" :column="2">
+        <template v-slot="{ item }">
+          <el-image :src="item.url" lazy>
+            <template #placeholder>
+              <div class="image-slot">加载中<span class="dot">...</span></div>
+            </template>
+          </el-image>
+        </template>
+      </Waterifall>
+    </div>
   </div>
 </template>
 <script setup>
@@ -135,11 +146,22 @@ import { addTab } from "@/constants/addtab";
 import material from "@/constants/material";
 import { ArrowDown } from "@element-plus/icons-vue";
 import PanelBlock from "@/common/panel-block.vue";
+import Waterifall from "@/common/waterfall.vue";
 const { state } = useStore();
 const repoSrc = ref("https://haixin-fang.github.io/vue-design-editor-static/");
 const selectItem = ref();
 const activeModule = computed(() => {
   return state.activeModule;
+});
+
+const imageList = computed(() => {
+  if (state.imageList) {
+    state.imageList.forEach((item) => {
+      item.url = repoSrc.value + "image/" + item.url;
+    });
+    return state.imageList;
+  }
+  return [];
 });
 
 const icons = computed(() => {
@@ -151,7 +173,6 @@ const materialList = shallowRef(
   material.map((item, index) => ({ ...item, id: index }))
 );
 function onChange(item) {
-  debugger;
   selectItem.value = item;
 }
 

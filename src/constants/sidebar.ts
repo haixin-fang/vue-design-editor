@@ -12,11 +12,11 @@ export const modulelist = [
     icon: "icon-templet-",
   },
   {
-    type: "Image",
+    type: "material",
     text: "素材",
     drag: false,
     icon: "icon-xingzhuang",
-    show: true, //默认展示
+
     fileType: ["jpg", "png", "gif", "svg"],
   },
   {
@@ -34,9 +34,10 @@ export const modulelist = [
     },
   },
   {
-    type: "background",
+    type: "Image",
     text: "图片",
     drag: false,
+    show: true, //默认展示
     icon: "icon-editor-background",
     fileType: ["jpg", "png", "gif", "svg"],
   },

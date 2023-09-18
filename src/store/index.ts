@@ -5,7 +5,7 @@ export default createStore({
   state: {
     isClose: true,
     activeModule: null,
-    materialList: [],
+    imageList: [],
     loadOk: false,
     icons: [],
   },
@@ -19,7 +19,7 @@ export default createStore({
     },
     Ok(state, value) {
       state.loadOk = true;
-      state.materialList = value;
+      state.imageList = value;
     },
     COMMIT_ICONS(state, value) {
       state.icons = value;
