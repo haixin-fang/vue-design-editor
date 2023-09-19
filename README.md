@@ -6,6 +6,7 @@
 - psd 同步为模板
 - 解析 psd 切片
 - pdf 解析
+- ppt 解析 (pptxtojson,pptxgenjs)
 - 滤镜
 - 动画
 - 蒙版
@@ -23,4 +24,4 @@
 - 图片替换
 - 图片滤镜
 - 国际化
-- 支持导出 pdf, png, jpg, gif, mp4 等
+- 支持导出 pdf, png, jpg, gif, mp4, ppt 等

@@ -46,6 +46,10 @@ class Handler implements HandlerOptions {
     this.canvas = options.canvas;
     this.container = options.container;
   };
+
+  add = (option) => {
+    debugger;
+  };
 }
 
 export default Handler;

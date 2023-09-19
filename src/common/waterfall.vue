@@ -34,6 +34,7 @@ export default {
   },
   mounted() {
     this.renderList();
+    window.addEventListener("resize", this.renderList);
   },
   methods: {
     renderList() {
@@ -56,7 +57,6 @@ export default {
       }
     },
     setElementStyle(element, img, index) {
-      debugger;
       // 计算出图片实际在项目中显示的高
       const w = this.$refs.container.offsetWidth / this.column;
       const h = ((w - 6) / img.width) * img.height + 6;

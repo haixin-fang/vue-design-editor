@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="material" v-if="activeModule.type == 'materail'">
+    <div class="material" v-if="activeModule.type == 'material'">
       <div class="nav-container">
         <div class="navlist">
           <div class="navItem" @click="selectItem = null">全部</div>
@@ -78,7 +78,12 @@
                   v-for="i in getIndex(item.interval).slice(0, 8)"
                   :key="i"
                 >
-                  <el-image :src="`${repoSrc}svg/${i}.svg`" lazy></el-image>
+                  <el-image
+                    :src="`${repoSrc}svg/${i}.svg`"
+                    lazy
+                    :draggable="true"
+                    @dragstart="handleDragStart($event, item)"
+                  ></el-image>
                 </div>
               </div>
               <div class="panel-batch" v-else>
@@ -88,7 +93,12 @@
                   v-for="(item, index) in icons.slice(0, 8)"
                   :key="index"
                 >
-                  <el-image :src="item.url" lazy></el-image>
+                  <el-image
+                    :src="item.url"
+                    lazy
+                    :draggable="true"
+                    @dragstart="handleDragStart($event, item)"
+                  ></el-image>
                 </div>
               </div>
             </div>
@@ -105,6 +115,8 @@
                 <el-image
                   style="width: 88px; height: 88px"
                   :src="`${repoSrc}svg/${item}.svg`"
+                  :draggable="true"
+                  @dragstart="handleDragStart($event, item)"
                   lazy
                 ></el-image>
               </div>
@@ -118,6 +130,8 @@
                 <el-image
                   style="width: 88px; height: 88px"
                   :src="item.url"
+                  :draggable="true"
+                  @dragstart="handleDragStart($event, item)"
                   lazy
                 ></el-image>
               </div>
@@ -129,9 +143,14 @@
     <div class="Image" v-if="activeModule.type == 'Image'">
       <Waterifall :list="imageList" :column="2">
         <template v-slot="{ item }">
-          <el-image :src="item.url" lazy>
+          <el-image
+            :src="item.url"
+            loading="lazy"
+            lazy
+            @dragstart="handleDragStart($event, item)"
+          >
             <template #placeholder>
-              <div class="image-slot">加载中<span class="dot">...</span></div>
+              <div class="image-slot">Loading<span class="dot">...</span></div>
             </template>
           </el-image>
         </template>
@@ -180,6 +199,11 @@ const getIndex = ([start, end]) => {
   const arr = Array(end - (start - 1)).fill("");
   return arr.map((item, i) => i + start);
 };
+
+function handleDragStart(e, item) {
+  item.type = activeModule.value.type;
+  e.dataTransfer.setData("item", JSON.stringify(item));
+}
 </script>
 <style lang="scss" scoped>
 .anime-enter-from,
@@ -406,5 +430,27 @@ const getIndex = ([start, end]) => {
       }
     }
   }
+}
+::v-deep img[draggable="true"] {
+  cursor: pointer;
+}
+.el-image {
+  padding: 0 5px;
+  width: 100%;
+  min-height: 100px;
+}
+.image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #f5f7fa;
+  color: #a8abb2;
+  font-size: 14px;
+}
+.dot {
+  animation: dot 2s infinite steps(3, start);
+  overflow: hidden;
 }
 </style>
