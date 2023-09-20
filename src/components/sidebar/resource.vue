@@ -434,23 +434,25 @@ function handleDragStart(e, item) {
 ::v-deep img[draggable="true"] {
   cursor: pointer;
 }
-.el-image {
-  padding: 0 5px;
-  width: 100%;
-  min-height: 100px;
-}
-.image-slot {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background: #f5f7fa;
-  color: #a8abb2;
-  font-size: 14px;
-}
-.dot {
-  animation: dot 2s infinite steps(3, start);
-  overflow: hidden;
+.Image {
+  .el-image {
+    padding: 0 5px;
+    width: 100%;
+    min-height: 100px;
+  }
+  .image-slot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: #f5f7fa;
+    color: #a8abb2;
+    font-size: 14px;
+  }
+  .dot {
+    animation: dot 2s infinite steps(3, start);
+    overflow: hidden;
+  }
 }
 </style>

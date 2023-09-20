@@ -15,6 +15,7 @@ export const modulelist = [
     type: "material",
     text: "素材",
     drag: false,
+    show: true, //默认展示
     icon: "icon-xingzhuang",
 
     fileType: ["jpg", "png", "gif", "svg"],
@@ -37,7 +38,6 @@ export const modulelist = [
     type: "Image",
     text: "图片",
     drag: false,
-    show: true, //默认展示
     icon: "icon-editor-background",
     fileType: ["jpg", "png", "gif", "svg"],
   },
