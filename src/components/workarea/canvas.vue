@@ -20,6 +20,17 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    /**
+     * 是否可编辑
+     */
+    editable: {
+      type: Boolean,
+      default: true,
+    },
+    objectOption: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
     const id = ref(uuidv4());
@@ -31,7 +42,7 @@ export default {
         parentCanvas.value.parentElement.parentElement;
       // 要减去滚动条的高度
       const canvasOptions = Object.assign(
-        {},
+        { enableRetinaScaling: true },
         {
           height: offsetHeight - scrollWidth,
           width: offsetWidth - scrollWidth,

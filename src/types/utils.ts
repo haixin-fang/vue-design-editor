@@ -5,7 +5,7 @@ export interface WorkareaOption {
    * 链接
    * @type {string}
    */
-  src?: string;
+  src: string;
   /**
    * 图片File或blob
    * @type {File}
@@ -26,8 +26,25 @@ export interface WorkareaOption {
    * @type {string}
    */
   backgroundColor?: string;
+  /**
+   * 素材类型
+   * @type {string}
+   */
+  type?: string;
+
+  path?: any;
+
+  filters?: any[];
+
+  set: (key: string, value: any) => void;
+
+  setSrc: (
+    ley: any,
+    cb: () => void,
+    option: { dirty: boolean; crossOrigin?: "Anonymous"; [key: string]: any }
+  ) => void;
 }
 
 export type WorkareaObject = FabricImage & WorkareaOption;
 
-export type FabricImage = fabric.Image;
+export type FabricImage = fabric.Image & Partial<WorkareaOption>;

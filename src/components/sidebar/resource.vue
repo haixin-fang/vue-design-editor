@@ -82,7 +82,7 @@
                     :src="`${repoSrc}svg/${i}.svg`"
                     lazy
                     :draggable="true"
-                    @dragstart="handleDragStart($event, item)"
+                    @dragstart="handleDragStart($event, item, i)"
                   ></el-image>
                 </div>
               </div>
@@ -200,8 +200,11 @@ const getIndex = ([start, end]) => {
   return arr.map((item, i) => i + start);
 };
 
-function handleDragStart(e, item) {
+function handleDragStart(e, item, i) {
   item.type = activeModule.value.type;
+  if (item.interval) {
+    item.url = `${repoSrc.value}svg/${i}.svg`;
+  }
   e.dataTransfer.setData("item", JSON.stringify(item));
 }
 </script>

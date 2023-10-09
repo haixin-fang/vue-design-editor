@@ -12,7 +12,11 @@
     <template #workspace>
       <Workspace v-if="loadOk" ref="workspace">
         <template #canvas>
-          <Canvas :workareaOption="workareaOption" ref="canvasRef" />
+          <Canvas
+            :workareaOption="workareaOption"
+            ref="canvasRef"
+            :defaultOption="defaultOption"
+          />
         </template>
       </Workspace>
       <atom-spinner
@@ -45,6 +49,7 @@ const { dispatch, state } = useStore();
 const canvasRef = ref();
 const handler = ref();
 const workspace = ref();
+const defaultOption = ref({ filters: [] });
 provide("handler", handler);
 const loadOk = computed(() => {
   return state.loadOk;
@@ -64,14 +69,15 @@ function onDrap(e) {
   if (e.dataTransfer.getData("item")) {
     let data = JSON.parse(e.dataTransfer.getData("item"));
     const { layerX, layerY } = e;
+    const ruleWidth = 20; // 标尺宽度
     const item = {
       option: {
         name: data.templateName,
         type: data.type,
         data,
-        src: data.url,
-        left: layerX,
-        top: layerY,
+        src: data.url || data.src,
+        left: layerX - ruleWidth,
+        top: layerY - ruleWidth,
       },
     };
     if (data.width && data.height) {
@@ -80,7 +86,6 @@ function onDrap(e) {
     }
     let options = Object.assign({}, item);
     onAddItem(options);
-    return false;
   }
 }
 

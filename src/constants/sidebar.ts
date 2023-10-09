@@ -17,7 +17,6 @@ export const modulelist = [
     drag: false,
     show: true, //默认展示
     icon: "icon-xingzhuang",
-
     fileType: ["jpg", "png", "gif", "svg"],
   },
   {

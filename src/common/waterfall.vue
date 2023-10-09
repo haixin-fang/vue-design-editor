@@ -46,14 +46,16 @@ export default {
         this.columnData = [];
         // 计算出每列应该占总宽度的百分比
         this.itemWidth = `${100 / this.column}%`;
-        this.$nextTick(() => {
-          // 对所有盒子进行计算绝对定位的位置
-          const boxes =
-            this.$refs.container.getElementsByClassName("column-item");
-          for (let i = 0; i < boxes.length; i++) {
-            this.setElementStyle(boxes[i], this.list[i], i);
-          }
-        });
+        if (this.$refs.container) {
+          this.$nextTick(() => {
+            // 对所有盒子进行计算绝对定位的位置
+            const boxes =
+              this.$refs.container.getElementsByClassName("column-item");
+            for (let i = 0; i < boxes.length; i++) {
+              this.setElementStyle(boxes[i], this.list[i], i);
+            }
+          });
+        }
       }
     },
     setElementStyle(element, img, index) {
@@ -69,7 +71,7 @@ export default {
         // 找出最小高度的列
         let min = {};
         for (let i = 0; i < this.columnData.length; i++) {
-          if (!min.hasOwnProperty("index")) {
+          if (!Object.prototype.hasOwnProperty.call(min, "index")) {
             min = { index: i, value: this.columnData[i] };
           } else {
             if (this.columnData[i] < min.value) {
