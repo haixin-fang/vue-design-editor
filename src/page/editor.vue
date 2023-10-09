@@ -69,15 +69,18 @@ function onDrap(e) {
   if (e.dataTransfer.getData("item")) {
     let data = JSON.parse(e.dataTransfer.getData("item"));
     const { layerX, layerY } = e;
-    const ruleWidth = 20; // 标尺宽度
+    const pointerVpt = handler.value.canvas.restorePointerVpt({
+      x: layerX,
+      y: layerY,
+    });
     const item = {
       option: {
         name: data.templateName,
         type: data.type,
         data,
         src: data.url || data.src,
-        left: layerX - ruleWidth,
-        top: layerY - ruleWidth,
+        left: pointerVpt.x,
+        top: pointerVpt.y,
       },
     };
     if (data.width && data.height) {

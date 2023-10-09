@@ -8,3 +8,5 @@ declare module "*.vue" {
 declare module "element-plus";
 
 declare module "uuid";
+
+declare module "*.svg";

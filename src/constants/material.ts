@@ -1,8 +1,5 @@
 export default [
   {
-    title: "icons",
-  },
-  {
     title: "卡通",
     interval: [460, 489],
   },
@@ -17,6 +14,9 @@ export default [
   {
     title: "秋天",
     interval: [40, 49],
+  },
+  {
+    title: "icons",
   },
   {
     title: "计算机",

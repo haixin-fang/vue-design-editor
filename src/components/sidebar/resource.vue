@@ -150,7 +150,7 @@
             @dragstart="handleDragStart($event, item)"
           >
             <template #placeholder>
-              <div class="image-slot">Loading<span class="dot">...</span></div>
+              <div class="image-slot"></div>
             </template>
           </el-image>
         </template>
@@ -438,20 +438,37 @@ function handleDragStart(e, item, i) {
   cursor: pointer;
 }
 .Image {
+  padding: 5px;
   .el-image {
-    padding: 0 5px;
     width: 100%;
     min-height: 100px;
   }
   .image-slot {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    // width: 100%;
+    // height: 100%;
+    // background: #f5f7fa;
+    // color: #a8abb2;
+    // font-size: 14px;
+    position: absolute;
+    top: 0;
+    z-index: 3;
     width: 100%;
     height: 100%;
-    background: #f5f7fa;
-    color: #a8abb2;
-    font-size: 14px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+    background-size: 400% 100%;
+    animation: dui-skeleton-loading 1.4s ease infinite;
+  }
+  @keyframes dui-skeleton-loading {
+    0% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
   .dot {
     animation: dot 2s infinite steps(3, start);

@@ -9,7 +9,6 @@ class FabricHandler {
   }
 
   async Image(options: WorkareaObject) {
-    debugger;
     const type =
       this.handler.utils.getFileType(options.src) ||
       this.handler.utils.getBase64ImageType(options.src);
@@ -24,6 +23,7 @@ class FabricHandler {
   addSvg(obj: WorkareaOption) {
     return new Promise((resolve) => {
       const { src, path, ...otherOption } = obj;
+      const { width } = this.handler.workareaHandler.option;
       if (!src) {
         const res = new fabric.Path(path);
         resolve(res);
@@ -33,6 +33,13 @@ class FabricHandler {
             objects,
             options
           );
+          if (activeObject.width > width) {
+            const scale = width / activeObject.width;
+            activeObject.set({
+              scaleX: scale,
+              scaleY: scale,
+            });
+          }
           activeObject.set({
             crossOrigin: "Anonymous",
             src,
