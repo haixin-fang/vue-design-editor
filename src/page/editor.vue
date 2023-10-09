@@ -15,7 +15,7 @@
           <Canvas
             :workareaOption="workareaOption"
             ref="canvasRef"
-            :defaultOption="defaultOption"
+            :objectOption="defaultOption"
           />
         </template>
       </Workspace>

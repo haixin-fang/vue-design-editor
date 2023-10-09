@@ -34,28 +34,33 @@ export default {
   },
   setup(props) {
     const id = ref(uuidv4());
-    const canvas = ref();
+    // 禁止把画布设置成响应式,否则缩放和旋转功能失效
+    let canvas;
     const parentCanvas = ref();
     const handler = ref();
     onMounted(() => {
       const { offsetWidth, offsetHeight } =
         parentCanvas.value.parentElement.parentElement;
       // 要减去滚动条的高度
-      const canvasOptions = Object.assign(
-        { enableRetinaScaling: true },
-        {
-          height: offsetHeight - scrollWidth,
-          width: offsetWidth - scrollWidth,
-        }
-      );
-      canvas.value = new fabric.Canvas(`canvas_${id.value}`, canvasOptions);
-      canvas.value.renderAll();
+      const canvasOptions = Object.assign({
+        height: offsetHeight - scrollWidth,
+        width: offsetWidth - scrollWidth,
+        fireRightClick: true, // 启用右键，button的数字为3
+        stopContextMenu: true, // 禁止默认右键菜单
+        enableRetinaScaling: true,
+        controlsAboveOverlay: true,
+      });
+      canvas = new fabric.Canvas(`canvas_${id.value}`, canvasOptions);
+      canvas.renderAll();
       handler.value = new Handler({
         id: id.value,
-        canvas: canvas.value,
+        canvas,
         container: parentCanvas.value,
         ...props,
       });
+      canvas.selectionColor = "rgba(196,235,255,0.3)";
+      canvas.selectionBorderColor = "#6ccfff";
+      canvas.selectionLineWidth = 1;
     });
     return {
       id,

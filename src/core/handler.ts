@@ -2,6 +2,7 @@ import WorkareaHandler from "./WorkareaHandler";
 import FabricHandler from "./FabricHandler";
 import UitlsHandler from "./UtilsHandler";
 import ImageHandler from "./ImageHandler";
+import ControlHandler from "./ControlHandler";
 import { WorkareaOption, WorkareaObject, FabricImage } from "@/types/utils";
 
 import _ from "@/utils/_";
@@ -42,6 +43,7 @@ class Handler implements HandlerOptions {
   public workarea?: WorkareaObject;
   public objectOption?: any;
   public editable?: boolean;
+  private control: ControlHandler;
   constructor(options: HandlerOptions) {
     this.workareaOption = options.workareaOption;
     this.canvas = options.canvas;
@@ -53,6 +55,7 @@ class Handler implements HandlerOptions {
     this.fabricObjects = new FabricHandler(this);
     this.utils = new UitlsHandler(this);
     this.imageHandler = new ImageHandler(this);
+    this.control = new ControlHandler();
   }
 
   initialize(options: HandlerOptions) {
