@@ -27,10 +27,21 @@
     <div class="material" v-if="activeModule.type == 'material'">
       <div class="nav-container">
         <div class="navlist">
-          <div class="navItem" @click="selectItem = null">全部</div>
+          <div
+            class="navItem"
+            @click="selectItem = null"
+            :class="!selectItem ? 'navItemActive' : ''"
+          >
+            全部
+          </div>
           <div
             class="navItem"
             v-for="item in materialList.slice(0, 4)"
+            :class="
+              selectItem && selectItem.title == item.title
+                ? 'navItemActive'
+                : ''
+            "
             :key="item.id"
             @click="onChange(item)"
           >
@@ -166,6 +177,13 @@ import material from "@/constants/material";
 import { ArrowDown } from "@element-plus/icons-vue";
 import PanelBlock from "@/common/panel-block.vue";
 import Waterifall from "@/common/waterfall.vue";
+import {
+  ElImage,
+  ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem,
+  ElIcon,
+} from "element-plus";
 const { state } = useStore();
 const repoSrc = ref("https://haixin-fang.github.io/vue-design-editor-static/");
 const selectItem = ref();
@@ -344,7 +362,11 @@ function handleDragStart(e, item, i) {
           vertical-align: middle;
           margin-bottom: 4px;
           margin-left: 4px;
-          &:hover {
+          &.navItemActive {
+            background-color: #2254f4;
+            color: white;
+          }
+          &:not(.navItemActive):hover {
             color: #222529;
             background-color: #e8eaec;
             border-color: rgba(0, 0, 0, 0);
