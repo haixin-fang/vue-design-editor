@@ -6,6 +6,7 @@ import ControlHandler from "./ControlHandler";
 import { WorkareaOption, WorkareaObject, FabricImage } from "@/types/utils";
 
 import _ from "@/utils/_";
+
 export interface HandlerOption {
   /**
    * 工作区默认配置
@@ -20,6 +21,11 @@ export interface HandlerOption {
    */
   container?: HTMLDivElement;
   utils?: UitlsHandler;
+  onAdd?: (target: WorkareaObject) => void;
+  /**
+   * 画布是否可编辑
+   */
+  editable?: boolean;
   /**
    * 工作区对象
    */
@@ -33,29 +39,33 @@ interface FabricOptions {
 }
 
 class Handler implements HandlerOptions {
-  public workareaOption: WorkareaOption;
+  public workareaOption;
   public workareaHandler: WorkareaHandler;
   public fabricObjects: FabricHandler & FabricOptions;
   public utils: UitlsHandler;
   public imageHandler: ImageHandler;
-  public canvas: any;
-  public container?: HTMLDivElement;
   public workarea?: WorkareaObject;
   public objectOption?: any;
-  public editable?: boolean;
   private control: ControlHandler;
+  public canvas;
+  public onAdd;
+  public editable;
+  public container;
   constructor(options: HandlerOptions) {
     this.workareaOption = options.workareaOption;
     this.canvas = options.canvas;
     this.container = options.container;
     this.editable = options.editable;
-    this.initialize(options);
+
+    this.onAdd = options.onAdd;
 
     this.workareaHandler = new WorkareaHandler(this);
     this.fabricObjects = new FabricHandler(this);
     this.utils = new UitlsHandler(this);
     this.imageHandler = new ImageHandler(this);
     this.control = new ControlHandler();
+
+    this.initialize(options);
   }
 
   initialize(options: HandlerOptions) {
@@ -69,6 +79,18 @@ class Handler implements HandlerOptions {
 
   setObjectOption = (objectOption: any) => {
     this.objectOption = Object.assign({}, this.objectOption, objectOption);
+  };
+
+  select = (obj: WorkareaObject, find = false) => {
+    let findObject: WorkareaObject | null = obj;
+    if (find) {
+      findObject = this.utils.find(obj);
+    }
+    if (findObject) {
+      this.canvas.discardActiveObject();
+      this.canvas.setActiveObject(findObject);
+      this.canvas.requestRenderAll();
+    }
   };
 
   setImage = (obj: FabricImage, source: any) => {
@@ -155,11 +177,15 @@ class Handler implements HandlerOptions {
   };
 
   addContent(createdObj: any) {
+    const { onAdd } = this;
     if (createdObj) {
       if (!createdObj.id) {
         createdObj.id = this.utils.uuid();
       }
       this.canvas.add(createdObj);
+      if (onAdd) {
+        onAdd(createdObj);
+      }
     }
     this.canvas.renderAll();
     return createdObj;

@@ -8,6 +8,7 @@ export default createStore({
     imageList: [],
     loadOk: false,
     icons: [],
+    selectedItem: null, // 选中的画布元素
   },
   getters: {},
   mutations: {
@@ -23,6 +24,9 @@ export default createStore({
     },
     COMMIT_ICONS(state, value) {
       state.icons = value;
+    },
+    setActivateItem(state, value) {
+      state.selectedItem = value;
     },
   },
   actions: {

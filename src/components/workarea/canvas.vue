@@ -31,6 +31,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    /**
+     * 新增素材
+     */
+    onAdd: {
+      type: Function,
+    },
   },
   setup(props) {
     const id = ref(uuidv4());

@@ -1,6 +1,7 @@
 import { fabric } from "fabric";
 
 export interface WorkareaOption {
+  id: string;
   /**
    * 链接
    * @type {string}
@@ -44,7 +45,9 @@ export interface WorkareaOption {
     option: { dirty: boolean; crossOrigin?: "Anonymous"; [key: string]: any }
   ) => void;
 }
-
+/**
+ * 画布元素
+ */
 export type WorkareaObject = FabricImage & WorkareaOption;
 
 export type FabricImage = fabric.Image & Partial<WorkareaOption>;

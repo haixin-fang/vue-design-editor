@@ -16,6 +16,7 @@
             :workareaOption="workareaOption"
             ref="canvasRef"
             :objectOption="defaultOption"
+            :onAdd="onAdd"
           />
         </template>
       </Workspace>
@@ -45,7 +46,7 @@ import { workareaOption } from "@/constants/workspace";
 import { ref, onMounted, provide, computed, watch, nextTick } from "vue";
 import { AtomSpinner } from "epic-spinners";
 import { useStore } from "vuex";
-const { dispatch, state } = useStore();
+const { dispatch, state, commit } = useStore();
 const canvasRef = ref();
 const handler = ref();
 const workspace = ref();
@@ -96,6 +97,11 @@ function onAddItem(item) {
   const id = uuidv4();
   const option = Object.assign({}, item.option, { id });
   handler.value.add(option);
+}
+
+function onAdd(target) {
+  commit("setActivateItem", target);
+  handler.value.select(target);
 }
 </script>
 <style lang="scss" scoped>

@@ -1,5 +1,6 @@
 import Handler from "./handler";
 import { v4 as uuidv4 } from "uuid";
+import { WorkareaObject } from "@/types/utils";
 class UtilsHandler {
   private handler: Handler;
   constructor(handler: Handler) {
@@ -31,6 +32,25 @@ class UtilsHandler {
   uuid() {
     return uuidv4();
   }
+
+  find = (obj: WorkareaObject): WorkareaObject | null => this.findById(obj.id);
+
+  findById = (id: string): WorkareaObject | null => {
+    let findObject = null;
+    const exist = this.handler.canvas
+      .getObjects()
+      .some((obj: WorkareaObject) => {
+        if (obj.id === id) {
+          findObject = obj;
+          return true;
+        }
+        return false;
+      });
+    if (!exist) {
+      return null;
+    }
+    return findObject;
+  };
 }
 
 export default UtilsHandler;

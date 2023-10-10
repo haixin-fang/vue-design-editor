@@ -4,7 +4,7 @@
   "private": true,
   "description": "基于fabric.js和Vue的图片、视频编辑器",
   "keywords": [
-    "fabric",
+    "fabric.js",
     "vue",
     "vue3",
     "element-plus",

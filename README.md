@@ -1,3 +1,7 @@
+## vue-design-editor
+
+[Demo](https://haixin-fang.github.io/vue-design-editor/) fabric.js and Vue3 based image editor, can customize fonts, materials, design templates.
+
 ## 功能
 
 - 图片编辑
@@ -25,3 +29,10 @@
 - 图片滤镜
 - 国际化
 - 支持导出 pdf, png, jpg, gif, mp4, ppt 等
+
+## 启动
+
+```js
+    npm i
+    npm run dev
+```
