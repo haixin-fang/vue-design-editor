@@ -7,7 +7,7 @@
       </div>
 
       <div class="header_toolbar">
-        <div class="custom-size">
+        <div class="custom-size popover">
           <div class="input-number-group">
             <div class="input-number" type="number">
               <el-input v-model="width" />
@@ -67,14 +67,24 @@
     </div>
     <div class="size-body">
       <div class="size-list">
-        <div class="size-item size-item-select">
+        <div
+          class="size-item"
+          :class="!workspace || !workspace.sizeId ? 'size-item-select' : ''"
+          @click="changeCustom"
+        >
           <el-icon style="width: 1em; height: 1em"><Select /></el-icon>
           <div class="size-name">自定义尺寸</div>
         </div>
-        <div class="size-item" v-for="(item, index) in sizeList" :key="index">
-          <el-icon style="width: 1em; height: 1em" v-show="false"
-            ><Select
-          /></el-icon>
+        <div
+          class="size-item"
+          :class="
+            workspace && item.id == workspace.sizeId ? 'size-item-select' : ''
+          "
+          v-for="(item, index) in sizeList"
+          :key="index"
+          @click="changeSize(item)"
+        >
+          <el-icon style="width: 1em; height: 1em"><Select /></el-icon>
           <div class="size-name">{{ item.title }}</div>
           <div class="size-info">
             <span>{{ item.material.width }}</span
@@ -87,12 +97,29 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, computed, inject } from "vue";
 import { ArrowLeft, ArrowUp, ArrowDown, Select } from "@element-plus/icons-vue";
+import { ElPopover, ElIcon } from "element-plus";
 import { size } from "@/constants/size";
+import { useStore } from "vuex";
+const { state } = useStore();
 const sizeList = ref(size);
+const handler = inject("handler");
 const width = ref();
 const height = ref();
+const workspace = computed(() => {
+  return state.workspace;
+});
+function changeSize(size) {
+  workspace.value.sizeId = size.id;
+  handler.value?.workareaHandler.setSize(
+    parseInt(size?.material.width),
+    parseInt(size?.material.height)
+  );
+}
+function changeCustom() {
+  workspace.value.sizeId = "";
+}
 </script>
 <style lang="scss">
 .unit-menu {
@@ -287,8 +314,14 @@ const height = ref();
         padding-left: 30px;
         border-radius: var(--border-radius-large);
         cursor: pointer;
+        .el-icon {
+          display: none;
+        }
         &.size-item-select {
           background-color: #f0f6ff;
+          .el-icon {
+            display: block;
+          }
         }
         &:hover {
           background-color: #f6f7f9;

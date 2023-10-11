@@ -13,8 +13,20 @@
   </teleport>
 </template>
 <script setup>
-import { defineProps, watch, ref, onUnmounted, useSlots, nextTick } from "vue";
+import {
+  defineProps,
+  watch,
+  ref,
+  onUnmounted,
+  onMounted,
+  nextTick,
+  defineEmits,
+} from "vue";
 import { throttle } from "lodash-es";
+/**
+ * 要求引用该组件的组件 类名中要加popover
+ */
+const emit = defineEmits(["close"]);
 const props = defineProps({
   to: {
     type: String,
@@ -47,6 +59,22 @@ watch(
     }
   }
 );
+
+onMounted(() => {
+  window.addEventListener("click", (e) => {
+    if (props.show) {
+      const res = Array.from(e.path || e.composedPath()).find((item) => {
+        if (item.className && item.className.indexOf("popover") != -1) {
+          return item;
+        }
+      });
+      if (!res) {
+        // 点击弹窗区域外
+        emit("close");
+      }
+    }
+  });
+});
 
 onUnmounted(() => {
   window.removeEventListener("resize", init);

@@ -31,7 +31,6 @@ METHODS.forEach((name) => {
     return (this.$_guides as any)[name](...args);
   };
 });
-
 export default {
   name: "guides",
   methods,

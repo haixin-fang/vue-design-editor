@@ -17,6 +17,7 @@
             ref="canvasRef"
             :objectOption="defaultOption"
             :onAdd="onAdd"
+            :init="init"
           />
         </template>
       </Workspace>
@@ -49,17 +50,26 @@ import { useStore } from "vuex";
 const { dispatch, state, commit } = useStore();
 const canvasRef = ref();
 const handler = ref();
-const workspace = ref();
+const workspace = ref(); // 操作区dom
 const defaultOption = ref({ filters: [] });
+const canvas = ref(); // 画布fabric对象
 provide("handler", handler);
+provide("canvas", canvas);
 const loadOk = computed(() => {
   return state.loadOk;
+});
+// 页面数据加载完成后同步执行init方法
+let loadResolve;
+const loadPro = new Promise((resolve) => {
+  loadResolve = resolve;
 });
 watch(loadOk, async (value) => {
   if (value) {
     await nextTick();
     workspace.value.$el.addEventListener("drop", onDrap, false);
     handler.value = canvasRef.value?.handler;
+    canvas.value = handler.value.canvas;
+    loadResolve();
   }
 });
 onMounted(async () => {
@@ -102,6 +112,11 @@ function onAddItem(item) {
 function onAdd(target) {
   commit("setActivateItem", target);
   handler.value.select(target);
+}
+// 初始化完成后执行的逻辑
+async function init() {
+  await loadPro;
+  commit("setWorkarea", handler.value?.workareaHandler.workspace);
 }
 </script>
 <style lang="scss" scoped>

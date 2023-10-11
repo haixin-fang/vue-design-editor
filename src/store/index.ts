@@ -9,6 +9,7 @@ export default createStore({
     loadOk: false,
     icons: [],
     selectedItem: null, // 选中的画布元素
+    workspace: null, // 画布对象
   },
   getters: {},
   mutations: {
@@ -28,6 +29,9 @@ export default createStore({
     setActivateItem(state, value) {
       state.selectedItem = value;
     },
+    setWorkarea(state, value) {
+      state.workspace = value;
+    },
   },
   actions: {
     getMaterial({ commit }) {
@@ -35,11 +39,13 @@ export default createStore({
       pro.push(
         request({
           url: "https://haixin-fang.github.io/vue-design-editor-static/imglist.json",
+          timeout: 10000,
         }).catch((e) => console.error(e))
       );
       pro.push(
         request({
           url: "https://haixin-fang.github.io/icons/bootstrap-icons.json",
+          timeout: 10000,
         }).catch((e) => console.error(e))
       );
       Promise.all(pro).then((data) => {

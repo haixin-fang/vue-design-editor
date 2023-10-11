@@ -22,6 +22,7 @@ export interface HandlerOption {
   container?: HTMLDivElement;
   utils?: UitlsHandler;
   onAdd?: (target: WorkareaObject) => void;
+  init?: () => void;
   /**
    * 画布是否可编辑
    */
@@ -44,11 +45,11 @@ class Handler implements HandlerOptions {
   public fabricObjects: FabricHandler & FabricOptions;
   public utils: UitlsHandler;
   public imageHandler: ImageHandler;
-  public workarea?: WorkareaObject;
   public objectOption?: any;
   private control: ControlHandler;
   public canvas;
   public onAdd;
+  public init;
   public editable;
   public container;
   constructor(options: HandlerOptions) {
@@ -58,6 +59,7 @@ class Handler implements HandlerOptions {
     this.editable = options.editable;
 
     this.onAdd = options.onAdd;
+    this.init = options.init;
 
     this.workareaHandler = new WorkareaHandler(this);
     this.fabricObjects = new FabricHandler(this);
@@ -68,8 +70,11 @@ class Handler implements HandlerOptions {
     this.initialize(options);
   }
 
-  initialize(options: HandlerOptions) {
+  async initialize(options: HandlerOptions) {
+    const { init } = this;
     this.initOption(options);
+
+    init && init();
   }
 
   initOption = (options: HandlerOptions) => {

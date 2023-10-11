@@ -29,7 +29,9 @@
             <div class="gda-space-item">
               <div class="panel-row">
                 <div class="panel-row__label">尺寸</div>
-                <div class="panel-row__content">900 × 3300 px</div>
+                <div class="panel-row__content" v-if="workspace">
+                  {{ workspace.width }} × {{ workspace.height }} px
+                </div>
               </div>
               <div class="gda-space-item">
                 <div class="panel-row">
@@ -81,7 +83,8 @@
 </template>
 <script>
 import { panel } from "@/constants/panel";
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
 import Bar from "./bar.vue";
 import WorkspaceSize from "./workspace-size.vue";
 export default {
@@ -90,9 +93,14 @@ export default {
     const headtool = ref(panel);
     const type = ref("design");
     const sizeShow = ref(false);
+    const { state } = useStore();
+    const workspace = computed(() => {
+      return state.workspace;
+    });
     return {
       headtool,
       sizeShow,
+      workspace,
       getActiveClass(panelItem) {
         if (Array.isArray(panelItem.type)) {
           return panelItem.type.includes(type.value) ? "tabActive" : "";

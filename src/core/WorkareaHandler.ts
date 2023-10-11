@@ -80,9 +80,7 @@ class EditorWorkspace {
     this.option.width = width;
     this.option.height = height;
     // 重新设置workspace
-    this.workspace = this.canvas
-      .getObjects()
-      .find((item: any) => item.id === "workspace") as fabric.Rect;
+    this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
     this.workspace.set("width", width);
     this.workspace.set("height", height);
     this.auto();
@@ -128,7 +126,7 @@ class EditorWorkspace {
     const center = this.canvas.getCenter();
     this.canvas.zoomToPoint(
       new fabric.Point(center.left, center.top),
-      zoomRatio
+      zoomRatio > 5 ? 5 : zoomRatio
     );
   }
 

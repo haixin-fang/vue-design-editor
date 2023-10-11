@@ -34,6 +34,7 @@
           width: 'calc(100% - 20px)',
           height: '20px',
         }"
+        @changeGuides="OnChangeGuides"
       />
     </div>
     <!-- :selectedRanges="verRange" -->
@@ -75,7 +76,7 @@
       </div>
     </div>
     <div class="edit-bottom">
-      <ScaleBar />
+      <ScaleBar :clearRule="clearRule" :lockRule="lockRule" />
     </div>
   </div>
 </template>
@@ -98,9 +99,10 @@ export default {
     const shellPoi = ref(null);
     const container = ref();
     const handler = inject("handler");
+    const lockGuides = ref(true);
     const workspace = computed(() => {
       const viewportTransform = handler.value?.canvas?.viewportTransform;
-      const workspace = handler.value?.workareaHandler?.workspace;
+      const workspace = handler.value?.workareaHandler.workspace;
       if (viewportTransform && workspace) {
         return {
           left: parseInt(viewportTransform[4]),
@@ -128,6 +130,8 @@ export default {
       initRuleRange();
       window.addEventListener("resize", onResize);
       container.value.addEventListener("scroll", onScroll);
+
+      console.log(guides1.value);
     });
     onUnmounted(() => {
       window.removeEventListener("resize", onResize);
@@ -194,6 +198,18 @@ export default {
       }
     }
 
+    function clearRule() {
+      guides1.value.loadGuides([]);
+      guides2.value.loadGuides([]);
+    }
+    function lockRule() {
+      lockGuides.value = !lockGuides.value;
+    }
+
+    function OnChangeGuides(e) {
+      e.isChange = false;
+    }
+
     return {
       /**
        * 标尺相关逻辑
@@ -205,6 +221,9 @@ export default {
       shell,
       shellPoi,
       container,
+      clearRule,
+      lockRule,
+      OnChangeGuides,
       textFormat(value) {
         if (shellPoi.value) {
           if (value == shellPoi.value.left) {

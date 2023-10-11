@@ -37,6 +37,12 @@ export default {
     onAdd: {
       type: Function,
     },
+    /**
+     * 画布加载完成后初始化回调
+     */
+    init: {
+      type: Function,
+    },
   },
   setup(props) {
     const id = ref(uuidv4());

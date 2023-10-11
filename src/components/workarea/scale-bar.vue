@@ -1,5 +1,5 @@
 <template>
-  <div class="dc-layout-scale-bar" ref="scaleDom">
+  <div class="dc-layout-scale-bar popover" ref="scaleDom">
     <svg
       role="img"
       aria-label="minus"
@@ -10,6 +10,7 @@
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       class="gd_design_icon gd_design_icon-minus"
+      @click="onMinus"
     >
       <path
         d="M12.75 12.75H21V11.25H12.75H11.25H3V12.75H11.25H12.75Z"
@@ -25,6 +26,7 @@
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       class="gd_design_icon gd_design_icon-add"
+      @click="onBig"
     >
       <path
         fill-rule="evenodd"
@@ -35,15 +37,19 @@
     ><span
       class="dc-layout-scale-bar__percent gda-popover-open"
       @click="showMenu"
+      :random="random"
     >
-      32%
+      {{ getZoom() }}
     </span>
-    <popover :dom="scaleDom" :show="menuShow">
+    <popover :dom="scaleDom" :show="menuShow" @close="menuShow = false">
       <template v-slot="{ setSlotRef }">
         <div class="content" :ref="(el) => setSlotRef(el)">
           <template v-for="(menu, index) in menus" :key="index">
             <template v-for="item in menu" :key="item.type">
-              <div class="dc-layout-scale-bar-item__menu__item">
+              <div
+                class="dc-layout-scale-bar-item__menu__item"
+                @click="handlerEvent(item)"
+              >
                 <span class="dc-layout-scale-bar-item__menu__item--main">{{
                   item.title
                 }}</span>
@@ -57,9 +63,21 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, inject, onMounted, onUnmounted, defineProps } from "vue";
 const menuShow = ref(false);
 const scaleDom = ref();
+const canvas = inject("canvas");
+const handler = inject("handler");
+const props = defineProps({
+  clearRule: {
+    type: Function,
+  },
+  lockRule: {
+    type: Function,
+  },
+});
+// 强制执行getZoom()
+const random = ref();
 const menus = ref([
   [
     {
@@ -72,36 +90,97 @@ const menus = ref([
     {
       type: "lock",
       title: "锁定参考线",
-      status: () => {},
+      status: () => {
+        props.lockRule();
+      },
     },
     {
-      type: "showRule",
+      type: "clearRule",
       title: "清除参考线",
-      status: () => {},
+      status: () => {
+        props.clearRule();
+      },
     },
   ],
   [
-    { type: "size", title: "400%", value: 4, status: () => {} },
-    { type: "size", title: "200%", value: 2, status: () => {} },
-    { type: "size", title: "100%", value: 1, status: () => {} },
-    { type: "size", title: "50%", value: 4, status: () => {} },
+    {
+      type: "size",
+      title: "400%",
+      value: 4,
+      status: () => {
+        handler.value?.workareaHandler.setZoomAuto(4);
+      },
+    },
+    {
+      type: "size",
+      title: "200%",
+      value: 2,
+      status: () => {
+        handler.value?.workareaHandler.setZoomAuto(2);
+      },
+    },
+    {
+      type: "size",
+      title: "100%",
+      value: 1,
+      status: () => {
+        handler.value?.workareaHandler.setZoomAuto(1);
+      },
+    },
+    {
+      type: "size",
+      title: "50%",
+      value: 0.5,
+      status: () => {
+        handler.value?.workareaHandler.setZoomAuto(0.5);
+      },
+    },
   ],
   [
     {
       type: "fullscreen",
       title: "适合满屏",
-      status: () => {},
+      status: () => {
+        handler.value?.workareaHandler.one();
+      },
     },
     {
       type: "fullscreen",
       title: "填满屏幕",
-      status: () => {},
+      status: () => {
+        handler.value?.workareaHandler.one();
+      },
     },
   ],
 ]);
+function handlerEvent(item) {
+  item.status();
+}
+
 function showMenu() {
   menuShow.value = !menuShow.value;
 }
+function getZoom() {
+  if (canvas.value) {
+    return parseInt(canvas.value.getZoom() * 100) + "%";
+  }
+  return "0%";
+}
+function setRandom() {
+  random.value = Math.random() * 1000;
+}
+function onMinus() {
+  handler.value?.workareaHandler.small();
+}
+function onBig() {
+  handler.value?.workareaHandler.big();
+}
+onMounted(() => {
+  window.addEventListener("resize", setRandom);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", setRandom);
+});
 </script>
 <style lang="scss" scoped>
 .dc-layout-scale-bar {

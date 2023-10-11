@@ -67,7 +67,14 @@
                   :command="item"
                   v-for="item in materialList.slice(4)"
                   :key="item.id"
-                  >{{ item.title }}</el-dropdown-item
+                  ><span
+                    :class="
+                      selectItem && selectItem.title == item.title
+                        ? 'navItemActive'
+                        : ''
+                    "
+                    >{{ item.title }}</span
+                  ></el-dropdown-item
                 >
               </el-dropdown-menu>
             </template>
@@ -240,6 +247,9 @@ function handleDragStart(e, item, i) {
 }
 .anime-leave-active {
   transition: left 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+}
+.navItemActive {
+  color: #2254f4;
 }
 .resource-station__panel {
   position: relative;
