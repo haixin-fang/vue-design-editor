@@ -85,6 +85,7 @@
 <script>
 import Guides from "@/common/guides/index.vue";
 import { ref, onMounted, onUnmounted, computed, inject, watch } from "vue";
+import { useStore } from "vuex";
 import ScaleBar from "./scale-bar.vue";
 export default {
   components: {
@@ -103,9 +104,10 @@ export default {
     const handler = inject("handler");
     const lockGuides = ref(true);
     const unit = ref();
+    const { state } = useStore();
     const workspace = computed(() => {
       const viewportTransform = handler.value?.canvas?.viewportTransform;
-      const workspace = handler.value?.workareaHandler.workspace;
+      const workspace = state.workspace;
       updateUnit();
       if (viewportTransform && workspace) {
         return {
@@ -127,6 +129,7 @@ export default {
       () => workspace,
       () => {
         initRuleRange();
+        updateUnit();
       },
       { deep: true }
     );
@@ -176,16 +179,38 @@ export default {
       if (container.value && handler.value) {
         const { offsetWidth, offsetHeight } = container.value;
         const { width, height } = handler.value.workareaHandler.option;
+        console.log("zoom", workspace.value?.zoom);
+        let zoom = workspace.value?.zoom
+          ? workspace.value.zoom > 1
+            ? 1
+            : workspace.value.zoom
+          : 1; // 缩放比例,越小刻度越大
         // 超过1000 后 刻度显示比较拥挤
+        const scale = handler.value?.workareaHandler.getAutoScale();
+        console.log(zoom, scale);
+        // 缩放比例小于最适应尺寸时
+        if (zoom < scale) {
+          zoom = zoom / scale;
+        }
         const base = width > 1000 || height > 1000 ? 100 : 50;
+        const KEDU = 50; // 相比于改值是几倍
+        const MORENUNIT = 50; // 默认刻度
+        console.log(
+          "MORENUNIT / (offsetWidth / width)",
+          MORENUNIT / (offsetWidth / width)
+        );
         if (offsetWidth / width < offsetHeight / height) {
           unit.value =
-            Math.floor(parseInt(50 / (offsetWidth / width)) / 50) * base || 10;
+            Math.floor(
+              parseInt(MORENUNIT / (offsetWidth / width) / zoom) / KEDU
+            ) * base || 10;
         } else {
           unit.value =
-            Math.floor(parseInt(50 / (offsetHeight / height)) / 50) * base ||
-            10;
+            Math.floor(
+              parseInt(MORENUNIT / (offsetHeight / height) / zoom) / KEDU
+            ) * base || 10;
         }
+        console.log("unit", unit.value);
       }
     }
 

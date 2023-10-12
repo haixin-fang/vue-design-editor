@@ -178,6 +178,11 @@ class EditorWorkspace {
     this.setZoomAuto(0.8 - 0.08);
     this.canvas.requestRenderAll();
   }
+
+  // 获取画布自适应下的比例
+  getAutoScale() {
+    return this._getScale();
+  }
 }
 
 export default EditorWorkspace;

@@ -64,7 +64,11 @@ onMounted(() => {
   window.addEventListener("click", (e) => {
     if (props.show) {
       const res = Array.from(e.path || e.composedPath()).find((item) => {
-        if (item.className && item.className.indexOf("popover") != -1) {
+        if (
+          item.className &&
+          typeof item.className == "string" &&
+          item.className.indexOf("popover") != -1
+        ) {
           return item;
         }
       });
