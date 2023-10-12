@@ -34,6 +34,7 @@
           width: 'calc(100% - 20px)',
           height: '20px',
         }"
+        :unit="unit"
         @changeGuides="OnChangeGuides"
       />
     </div>
@@ -61,6 +62,7 @@
         markColor="red"
         :zoom="shellPoi && shellPoi.zoom"
         :segment="1"
+        :unit="unit"
         :displayDragPos="true"
         :rulerStyle="{
           top: '20px',
@@ -100,9 +102,11 @@ export default {
     const container = ref();
     const handler = inject("handler");
     const lockGuides = ref(true);
+    const unit = ref();
     const workspace = computed(() => {
       const viewportTransform = handler.value?.canvas?.viewportTransform;
       const workspace = handler.value?.workareaHandler.workspace;
+      updateUnit();
       if (viewportTransform && workspace) {
         return {
           left: parseInt(viewportTransform[4]),
@@ -168,6 +172,23 @@ export default {
       }
     });
 
+    function updateUnit() {
+      if (container.value && handler.value) {
+        const { offsetWidth, offsetHeight } = container.value;
+        const { width, height } = handler.value.workareaHandler.option;
+        // 超过1000 后 刻度显示比较拥挤
+        const base = width > 1000 || height > 1000 ? 100 : 50;
+        if (offsetWidth / width < offsetHeight / height) {
+          unit.value =
+            Math.floor(parseInt(50 / (offsetWidth / width)) / 50) * base || 10;
+        } else {
+          unit.value =
+            Math.floor(parseInt(50 / (offsetHeight / height)) / 50) * base ||
+            10;
+        }
+      }
+    }
+
     function onResize() {
       guides1.value.resize();
       guides2.value.resize();
@@ -223,6 +244,7 @@ export default {
       container,
       clearRule,
       lockRule,
+      unit,
       OnChangeGuides,
       textFormat(value) {
         if (shellPoi.value) {

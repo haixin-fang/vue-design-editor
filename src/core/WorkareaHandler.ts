@@ -59,6 +59,7 @@ class EditorWorkspace {
     )
       return;
     const ruleWidth = 20; // 标尺宽度
+    // viewportTransform[0] x轴缩放
     viewportTransform[4] =
       canvas.width / 2 - objCenter.x * viewportTransform[0] + ruleWidth;
     viewportTransform[5] =
@@ -86,6 +87,28 @@ class EditorWorkspace {
     this.auto();
   }
 
+  getBili() {
+    return this.option.width / this.option.height;
+  }
+
+  setWidth(width: number) {
+    this._initBackground();
+    this.option.width = width;
+    // 重新设置workspace
+    this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
+    this.workspace.set("width", width);
+    this.auto();
+  }
+
+  setHeight(height: number) {
+    this._initBackground();
+    this.option.height = height;
+    // 重新设置workspace
+    this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
+    this.workspace.set("height", height);
+    this.auto();
+  }
+
   setZoomAuto(scale: number, cb?: (left?: number, top?: number) => void) {
     const { workspaceEl } = this;
     const width = workspaceEl.offsetWidth;
@@ -97,6 +120,7 @@ class EditorWorkspace {
     this.canvas.zoomToPoint(new fabric.Point(center.left, center.top), scale);
     if (!this.workspace) return;
     this.setCenterFromObject(this.workspace);
+    // this.canvas.centerObject(this.workspace);
 
     // 超出画布不展示
     this.workspace.clone((cloned: fabric.Rect) => {
@@ -123,22 +147,24 @@ class EditorWorkspace {
   big() {
     let zoomRatio = this.canvas.getZoom();
     zoomRatio += 0.05;
-    const center = this.canvas.getCenter();
-    this.canvas.zoomToPoint(
-      new fabric.Point(center.left, center.top),
-      zoomRatio > 5 ? 5 : zoomRatio
-    );
+    // const center = this.canvas.getCenter();
+    // this.canvas.zoomToPoint(
+    //   new fabric.Point(center.left, center.top),
+    //   zoomRatio > 5 ? 5 : zoomRatio
+    // );
+    this.setZoomAuto(zoomRatio > 5 ? 5 : zoomRatio);
   }
 
   // 缩小
   small() {
     let zoomRatio = this.canvas.getZoom();
     zoomRatio -= 0.05;
-    const center = this.canvas.getCenter();
-    this.canvas.zoomToPoint(
-      new fabric.Point(center.left, center.top),
-      zoomRatio < 0 ? 0.01 : zoomRatio
-    );
+    // const center = this.canvas.getCenter();
+    // this.canvas.zoomToPoint(
+    //   new fabric.Point(center.left, center.top),
+    //   zoomRatio < 0 ? 0.01 : zoomRatio
+    // );
+    this.setZoomAuto(zoomRatio < 0 ? 0.01 : zoomRatio);
   }
 
   // 自动缩放

@@ -10,10 +10,10 @@
         <div class="custom-size popover">
           <div class="input-number-group">
             <div class="input-number" type="number">
-              <el-input v-model="width" />
+              <el-input v-model="width" :min="1" :max="2000" />
             </div>
             <div class="input-number" type="number">
-              <el-input v-model="height" />
+              <el-input v-model="height" :min="1" :max="2000" />
             </div>
             <div class="input-number-group__suffix">
               <el-tooltip
@@ -22,8 +22,9 @@
                 content="锁定宽高比"
                 placement="top"
               >
-                <button type="button">
-                  <i class="iconfont icon-link-outline"></i>
+                <button type="button" @click="lockSize">
+                  <i class="iconfont icon-link-outline" v-if="lock"></i>
+                  <i class="iconfont icon-unlink-outline" v-else></i>
                 </button>
               </el-tooltip>
             </div>
@@ -99,14 +100,41 @@
 <script setup>
 import { ref, computed, inject } from "vue";
 import { ArrowLeft, ArrowUp, ArrowDown, Select } from "@element-plus/icons-vue";
-import { ElPopover, ElIcon } from "element-plus";
+import { ElPopover, ElIcon, ElInput } from "element-plus";
 import { size } from "@/constants/size";
 import { useStore } from "vuex";
 const { state } = useStore();
 const sizeList = ref(size);
 const handler = inject("handler");
-const width = ref();
-const height = ref();
+const lock = ref(false);
+const width = computed({
+  get() {
+    return state.workspace?.width;
+  },
+  set(value) {
+    if (lock.value) {
+      const bili = handler.value?.workareaHandler.getBili();
+      const height = value / bili;
+      handler.value?.workareaHandler.setSize(parseInt(value), parseInt(height));
+      return;
+    }
+    handler.value?.workareaHandler.setWidth(parseInt(value));
+  },
+});
+const height = computed({
+  get() {
+    return state.workspace?.height;
+  },
+  set(value) {
+    if (lock.value) {
+      const bili = handler.value?.workareaHandler.getBili();
+      const width = value * bili;
+      handler.value?.workareaHandler.setSize(parseInt(width), parseInt(value));
+      return;
+    }
+    handler.value?.workareaHandler.setHeight(parseInt(value));
+  },
+});
 const workspace = computed(() => {
   return state.workspace;
 });
@@ -119,6 +147,10 @@ function changeSize(size) {
 }
 function changeCustom() {
   workspace.value.sizeId = "";
+}
+
+function lockSize() {
+  lock.value = !lock.value;
 }
 </script>
 <style lang="scss">
