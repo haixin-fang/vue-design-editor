@@ -15,6 +15,7 @@ export const workareaOption = {
   hoverCursor: "default",
   name: "",
   id: "workarea",
+  unit: "px",
   // type: "workarea",
   isElement: false,
 };

@@ -1,13 +1,14 @@
 import { fabric } from "fabric";
 import Handler from "./handler";
-import { WorkareaOption } from "@/types/utils";
+import { WorkareaOption, FabricRect } from "@/types/utils";
 
 class EditorWorkspace {
   canvas: fabric.Canvas;
   workspaceEl: HTMLElement;
-  workspace: fabric.Rect | null;
+  workspace: FabricRect | null;
   option: WorkareaOption;
   handler: Handler;
+  unitEnum: any;
   constructor(handler: Handler) {
     this.handler = handler;
     this.canvas = handler.canvas;
@@ -19,6 +20,12 @@ class EditorWorkspace {
     this.workspace = null;
     this.option = handler.workareaOption;
     this.initialize();
+    // 像素转换, 1cm等于37.9像素等
+    this.unitEnum = {
+      cm: 37.9,
+      mm: 3.78,
+      px: 1,
+    };
   }
 
   initialize() {
@@ -78,12 +85,13 @@ class EditorWorkspace {
 
   setSize(width: number, height: number) {
     this._initBackground();
-    this.option.width = width;
-    this.option.height = height;
+    const unit = this.workspace?.unit || "px";
+    this.option.width = width * this.unitEnum[unit];
+    this.option.height = height * this.unitEnum[unit];
     // 重新设置workspace
     this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
-    this.workspace.set("width", width);
-    this.workspace.set("height", height);
+    this.workspace.set("width", this.option.width);
+    this.workspace.set("height", this.option.height);
     this.auto();
   }
 
@@ -93,7 +101,8 @@ class EditorWorkspace {
 
   setWidth(width: number) {
     this._initBackground();
-    this.option.width = width;
+    const unit = this.workspace?.unit || "px";
+    this.option.width = width * this.unitEnum[unit];
     // 重新设置workspace
     this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
     this.workspace.set("width", width);
@@ -102,7 +111,8 @@ class EditorWorkspace {
 
   setHeight(height: number) {
     this._initBackground();
-    this.option.height = height;
+    const unit = this.workspace?.unit || "px";
+    this.option.height = height * this.unitEnum[unit];
     // 重新设置workspace
     this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
     this.workspace.set("height", height);
@@ -128,6 +138,10 @@ class EditorWorkspace {
       this.canvas.requestRenderAll();
     });
     if (cb) cb(this.workspace.left, this.workspace.top);
+  }
+
+  unpdateUnit(unit: string) {
+    this.workspace?.set("unit", unit);
   }
 
   _getScale() {
@@ -170,7 +184,7 @@ class EditorWorkspace {
   // 自动缩放
   auto() {
     const scale = this._getScale();
-    this.setZoomAuto(scale - 0.08);
+    this.setZoomAuto(scale - 0.08 < 0.01 ? 0.01 : scale - 0.08);
   }
 
   // 1:1 放大

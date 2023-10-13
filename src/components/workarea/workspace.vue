@@ -16,6 +16,7 @@
         :textOffset="[0, -8]"
         :selectedRangesTextOffset="[0, -8]"
         :longLineSize="5"
+        :textFormat="textFormat"
         mainLineSize="50%"
         selectedBackgroundColor="#d9dcdf"
         backgroundColor="#f6f7f9"
@@ -35,6 +36,7 @@
           height: '20px',
         }"
         :unit="unit"
+        :useResizeObserver="true"
         @changeGuides="OnChangeGuides"
       />
     </div>
@@ -57,11 +59,13 @@
         backgroundColor="#f6f7f9"
         lineColor="#7f8792"
         :selectedRangesText="true"
+        :textFormat="verTextFormat"
         textColor="#7f8792"
         selectedRangesTextColor="red"
         markColor="red"
         :zoom="shellPoi && shellPoi.zoom"
         :segment="1"
+        :useResizeObserver="true"
         :unit="unit"
         :displayDragPos="true"
         :rulerStyle="{
@@ -125,20 +129,27 @@ export default {
         top: 0,
       };
     });
+    const unitType = computed(() => {
+      return state.workspace?.unit;
+    });
     watch(
-      () => workspace,
+      () => workspace.value?.zoom,
       () => {
         initRuleRange();
         updateUnit();
       },
       { deep: true }
     );
+    watch(
+      () => unitType.value,
+      () => {
+        updateUnit();
+      }
+    );
     onMounted(() => {
       initRuleRange();
       window.addEventListener("resize", onResize);
       container.value.addEventListener("scroll", onScroll);
-
-      console.log(guides1.value);
     });
     onUnmounted(() => {
       window.removeEventListener("resize", onResize);
@@ -179,7 +190,12 @@ export default {
       if (container.value && handler.value) {
         const { offsetWidth, offsetHeight } = container.value;
         const { width, height } = handler.value.workareaHandler.option;
-        console.log("zoom", workspace.value?.zoom);
+        let unitValue = handler.value.workareaHandler?.unitEnum[unitType.value];
+        const maxUnit = {
+          px: 1000,
+          cm: 100,
+          mm: 100,
+        };
         let zoom = workspace.value?.zoom
           ? workspace.value.zoom > 1
             ? 1
@@ -187,7 +203,6 @@ export default {
           : 1; // 缩放比例,越小刻度越大
         // 超过1000 后 刻度显示比较拥挤
         const scale = handler.value?.workareaHandler.getAutoScale();
-        console.log(zoom, scale);
         // 缩放比例小于最适应尺寸时
         if (zoom < scale) {
           zoom = zoom / scale;
@@ -195,22 +210,30 @@ export default {
         const base = width > 1000 || height > 1000 ? 100 : 50;
         const KEDU = 50; // 相比于改值是几倍
         const MORENUNIT = 50; // 默认刻度
-        console.log(
-          "MORENUNIT / (offsetWidth / width)",
-          MORENUNIT / (offsetWidth / width)
-        );
-        if (offsetWidth / width < offsetHeight / height) {
-          unit.value =
-            Math.floor(
-              parseInt(MORENUNIT / (offsetWidth / width) / zoom) / KEDU
-            ) * base || 10;
-        } else {
-          unit.value =
-            Math.floor(
-              parseInt(MORENUNIT / (offsetHeight / height) / zoom) / KEDU
-            ) * base || 10;
+        // mm 刻度比较拥挤
+        if (unitType.value == "mm") {
+          unitValue /= 3;
         }
-        console.log("unit", unit.value);
+        console.log("zoom", zoom);
+        console.log("unitValue", unitValue);
+        if (offsetWidth / width < offsetHeight / height) {
+          unit.value = parseInt(
+            (Math.floor(
+              parseInt(MORENUNIT / (offsetWidth / width) / zoom) / KEDU
+            ) || 1) * base || 10
+          );
+        } else {
+          unit.value = parseInt(
+            (Math.floor(
+              parseInt(MORENUNIT / (offsetHeight / height) / zoom) / KEDU
+            ) || 1) * base || 10
+          );
+        }
+        if (unit.value < unitValue) {
+          unit.value = (unitValue / zoom) * 2;
+        } else if (unit.value > maxUnit[unitType.value]) {
+          unit.value = maxUnit[unitType.value];
+        }
       }
     }
 
@@ -272,44 +295,48 @@ export default {
       unit,
       OnChangeGuides,
       textFormat(value) {
-        if (shellPoi.value) {
-          if (value == shellPoi.value.left) {
-            return 0;
-          } else if (value == shellPoi.value.left + shellPoi.value.width) {
-            return shellPoi.value.width;
-          } else if (
-            value >= shellPoi.value.left &&
-            value <= shellPoi.value.left + shellPoi.value.width
-          ) {
-            return value - shellPoi.value.left;
-          } else if (value <= shellPoi.value.left) {
-            return Math.abs(value - shellPoi.value.left);
-          } else if (value >= shellPoi.value.left + shellPoi.value.width) {
-            return value - shellPoi.value.width;
-          }
-        }
+        // if (shellPoi.value) {
+        //   if (value == shellPoi.value.left) {
+        //     return 0;
+        //   } else if (value == shellPoi.value.left + shellPoi.value.width) {
+        //     return shellPoi.value.width;
+        //   } else if (
+        //     value >= shellPoi.value.left &&
+        //     value <= shellPoi.value.left + shellPoi.value.width
+        //   ) {
+        //     return value - shellPoi.value.left;
+        //   } else if (value <= shellPoi.value.left) {
+        //     return Math.abs(value - shellPoi.value.left);
+        //   } else if (value >= shellPoi.value.left + shellPoi.value.width) {
+        //     return value - shellPoi.value.width;
+        //   }
+        // }
 
-        return "";
+        return parseInt(
+          value / handler.value?.workareaHandler.unitEnum[unitType.value]
+        );
       },
       verTextFormat(value) {
-        if (shellPoi.value) {
-          if (value == shellPoi.value.top) {
-            return 0;
-          } else if (value == shellPoi.value.top + shellPoi.value.height) {
-            return shellPoi.value.height;
-          } else if (
-            value >= shellPoi.value.top &&
-            value <= shellPoi.value.top + shellPoi.value.height
-          ) {
-            return value - shellPoi.value.top;
-          } else if (value <= shellPoi.value.top) {
-            return Math.abs(value - shellPoi.value.top);
-          } else if (value >= shellPoi.value.top + shellPoi.value.height) {
-            return value - shellPoi.value.top;
-          }
-        }
+        // if (shellPoi.value) {
+        //   if (value == shellPoi.value.top) {
+        //     return 0;
+        //   } else if (value == shellPoi.value.top + shellPoi.value.height) {
+        //     return shellPoi.value.height;
+        //   } else if (
+        //     value >= shellPoi.value.top &&
+        //     value <= shellPoi.value.top + shellPoi.value.height
+        //   ) {
+        //     return value - shellPoi.value.top;
+        //   } else if (value <= shellPoi.value.top) {
+        //     return Math.abs(value - shellPoi.value.top);
+        //   } else if (value >= shellPoi.value.top + shellPoi.value.height) {
+        //     return value - shellPoi.value.top;
+        //   }
+        // }
 
-        return "";
+        return parseInt(
+          value / handler.value?.workareaHandler.unitEnum[unitType.value]
+        );
       },
       DragPosFormat(value) {
         console.log("value", value);

@@ -39,26 +39,35 @@
           >
             <template #reference>
               <button type="button" class="btn-px">
-                <span class="dbu-resize-panel__unit-select__text">px</span
-                ><el-icon :size="12"><ArrowUp /></el-icon>
-                <!-- <el-icon><ArrowDown /></el-icon> -->
+                <span class="dbu-resize-panel__unit-select__text">{{
+                  workspace && workspace.unit
+                }}</span
+                ><el-icon :size="12" class="up"><ArrowUp /></el-icon>
+                <el-icon :size="12" class="down"><ArrowDown /></el-icon>
               </button>
             </template>
             <template #default>
               <div class="unit-menu-list">
-                <div class="unit-menu-item">
-                  <div class="unit-menu-item-select">
-                    px&nbsp;&nbsp;(像素)
-                    <el-icon style="width: 1em; height: 1em"
+                <div
+                  class="unit-menu-item"
+                  v-for="(item, index) in unitList"
+                  :key="index"
+                  @click="changeUnit(item)"
+                >
+                  <div
+                    :class="
+                      item.unit == workspace?.unit
+                        ? 'unit-menu-item-select'
+                        : ''
+                    "
+                  >
+                    {{ item.unit }}&nbsp;&nbsp;({{ item.title }})
+                    <el-icon
+                      style="width: 1em; height: 1em"
+                      v-if="item.unit == workspace?.unit"
                       ><Select
                     /></el-icon>
                   </div>
-                </div>
-                <div class="unit-menu-item">
-                  <div>cm&nbsp;&nbsp;(厘米)</div>
-                </div>
-                <div class="unit-menu-item">
-                  <div>mm&nbsp;&nbsp;(毫米)</div>
                 </div>
               </div>
             </template>
@@ -107,9 +116,29 @@ const { state } = useStore();
 const sizeList = ref(size);
 const handler = inject("handler");
 const lock = ref(false);
+const sizeShow = ref(false);
+const unitList = ref([
+  {
+    unit: "px",
+    title: "像素",
+  },
+  {
+    unit: "cm",
+    title: "厘米",
+  },
+  {
+    unit: "mm",
+    title: "毫米",
+  },
+]);
 const width = computed({
   get() {
-    return state.workspace?.width;
+    const unitValue = handler.value?.workareaHandler.unitEnum[unit.value];
+    let value = 0;
+    if (unitValue) {
+      value = state.workspace?.width / unitValue;
+    }
+    return parseInt(value || 0);
   },
   set(value) {
     if (lock.value) {
@@ -123,7 +152,12 @@ const width = computed({
 });
 const height = computed({
   get() {
-    return state.workspace?.height;
+    const unitValue = handler.value?.workareaHandler.unitEnum[unit.value];
+    let value = 0;
+    if (unitValue) {
+      value = state.workspace?.height / unitValue;
+    }
+    return parseInt(value || 0);
   },
   set(value) {
     if (lock.value) {
@@ -138,8 +172,12 @@ const height = computed({
 const workspace = computed(() => {
   return state.workspace;
 });
+const unit = computed(() => {
+  return workspace.value?.unit;
+});
 function changeSize(size) {
   workspace.value.sizeId = size.id;
+  workspace.value.unit = size?.material.unit;
   handler.value?.workareaHandler.setSize(
     parseInt(size?.material.width),
     parseInt(size?.material.height)
@@ -151,6 +189,10 @@ function changeCustom() {
 
 function lockSize() {
   lock.value = !lock.value;
+}
+
+function changeUnit(item) {
+  handler.value?.workareaHandler.unpdateUnit(item.unit);
 }
 </script>
 <style lang="scss">
@@ -323,6 +365,18 @@ function lockSize() {
             color: var(--text-color-primary);
             background-color: rgba(0, 0, 0, 0.04);
             border-color: transparent;
+            .down {
+              display: none;
+            }
+            .up {
+              display: block;
+            }
+          }
+          .down {
+            display: block;
+          }
+          .up {
+            display: none;
           }
         }
       }

@@ -51,3 +51,6 @@ export interface WorkareaOption {
 export type WorkareaObject = FabricImage & WorkareaOption;
 
 export type FabricImage = fabric.Image & Partial<WorkareaOption>;
+
+export type FabricRect = fabric.Rect &
+  Partial<WorkareaOption> & { unit?: string };
