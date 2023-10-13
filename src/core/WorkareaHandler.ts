@@ -65,7 +65,7 @@ class EditorWorkspace {
       !viewportTransform
     )
       return;
-    const ruleWidth = 20; // 标尺宽度
+    const ruleWidth = 10; // 标尺宽度
     // viewportTransform[0] x轴缩放
     viewportTransform[4] =
       canvas.width / 2 - objCenter.x * viewportTransform[0] + ruleWidth;

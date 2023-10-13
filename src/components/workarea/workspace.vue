@@ -10,7 +10,7 @@
         ref="guides1"
         type="horizontal"
         direction="start"
-        textAlign="right"
+        textAlign="left"
         textBackgroundColor="transparent"
         rangeBackgroundColor="red"
         :textOffset="[0, -8]"
@@ -31,7 +31,7 @@
         :segment="2"
         :displayDragPos="false"
         :rulerStyle="{
-          left: '10px',
+          left: '20px',
           width: 'calc(100% - 20px)',
           height: '20px',
         }"
@@ -363,14 +363,14 @@ export default {
     width: 100%;
     height: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    box-sizing: content-box;
+    box-sizing: border-box;
   }
   .ruler.vertical {
     top: 0px;
     width: 20px;
     height: 100%;
     border-right: 1px solid rgba(0, 0, 0, 0.08);
-    box-sizing: content-box;
+    box-sizing: border-box;
   }
   .box {
     position: relative;
@@ -384,7 +384,7 @@ export default {
   .box:after {
     position: absolute;
     content: "";
-    background: #f6f7f9;
+    background: #e8eaec;
   }
   .box:before {
     width: 1px;
@@ -403,7 +403,7 @@ export default {
     bottom: 0;
     left: 0;
     z-index: 1;
-    overflow: scroll;
+    overflow: hidden;
     font: 14px/1.5 Arial, PingFangSC-Regular, STHeitiSC-Light, Helvetica Neue;
     color: #333;
     background: none;
