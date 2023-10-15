@@ -5,7 +5,7 @@ export const addTab = [
     list: [
       {
         type: "upload",
-        icon: "/src/assets/upload.svg",
+        icon: require("/src/assets/upload.svg"),
         title: "本地上传",
       },
     ],

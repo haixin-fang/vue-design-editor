@@ -10,7 +10,7 @@
     "sourceMap": true,
     "declaration": true,
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "target": "esnext",
     "outDir": "lib",
