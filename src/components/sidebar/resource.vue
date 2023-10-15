@@ -198,6 +198,7 @@ const activeModule = computed(() => {
   return state.activeModule;
 });
 const getImageUrl = (url) => {
+  console.log("888");
   return new URL(url, import.meta.url).href;
 };
 const imageList = computed(() => {
