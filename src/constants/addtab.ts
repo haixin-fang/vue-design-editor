@@ -1,3 +1,6 @@
+const getImageUrl = (url: string) => {
+  return new URL(url, import.meta.url).href;
+};
 export const addTab = [
   {
     type: "image",
@@ -16,7 +19,7 @@ export const addTab = [
     list: [
       {
         type: "h1",
-        icon: "/src/assets/h1.svg",
+        icon: getImageUrl("/src/assets/h1.svg"),
         title: "标题",
       },
       {
