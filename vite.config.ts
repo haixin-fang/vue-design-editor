@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import VitePlugRequire from "vite-plugin-require-transform";
+import ViteTransfrom from "vite-plugin-require-transform";
 
 export default defineConfig({
-  plugins: [vue(), VitePlugRequire()],
+  plugins: [vue(), ViteTransfrom()],
   server: {
     host: "0.0.0.0",
     port: 8888,

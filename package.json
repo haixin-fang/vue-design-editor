@@ -29,6 +29,7 @@
     "framework-utils": "^1.1.0",
     "lodash-es": "^4.17.21",
     "uuid": "^9.0.0",
+    "vite-plugin-require-transform": "^1.0.21",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"

@@ -1,6 +1,3 @@
-const getImageUrl = (url: string) => {
-  return new URL(url, import.meta.url).href;
-};
 export const addTab = [
   {
     type: "image",
@@ -8,7 +5,7 @@ export const addTab = [
     list: [
       {
         type: "upload",
-        icon: require("/src/assets/upload.svg"),
+        icon: require("@/assets/upload.svg"),
         title: "本地上传",
       },
     ],
@@ -19,22 +16,22 @@ export const addTab = [
     list: [
       {
         type: "h1",
-        icon: getImageUrl("/src/assets/h1.svg"),
+        icon: require("@/assets/h1.svg"),
         title: "标题",
       },
       {
         type: "h2",
-        icon: "/src/assets/h2.svg",
+        icon: require("@/assets/h2.svg"),
         title: "副标题",
       },
       {
         type: "Aa",
-        icon: "/src/assets/Aa.svg",
+        icon: require("@/assets/Aa.svg"),
         title: "正文",
       },
       {
         type: "Aa",
-        icon: "/src/assets/3d.svg",
+        icon: require("@/assets/3d.svg"),
         title: "3D文字",
       },
     ],
@@ -45,19 +42,19 @@ export const addTab = [
     list: [
       {
         type: "square",
-        icon: "/src/assets/square.svg",
+        icon: require("@/assets/square.svg"),
       },
       {
         type: "triangle",
-        icon: "/src/assets/triangle.svg",
+        icon: require("@/assets/triangle.svg"),
       },
       {
         type: "circle",
-        icon: "/src/assets/circle.svg",
+        icon: require("@/assets/circle.svg"),
       },
       {
         type: "line",
-        icon: "/src/assets/line.svg",
+        icon: require("@/assets/line.svg"),
       },
     ],
   },
@@ -67,7 +64,7 @@ export const addTab = [
     list: [
       {
         type: "qrcode",
-        icon: "/src/assets/qrcode.svg",
+        icon: require("@/assets/qrcode.svg"),
         title: "二维码",
       },
     ],
