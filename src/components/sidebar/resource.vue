@@ -16,7 +16,7 @@
                 v-for="(item, vindex) in list.list"
                 :key="vindex"
               >
-                <img :src="item.icon" alt="" />
+                <img :src="getImageUrl(item.icon)" alt="" />
                 <div class="name" v-if="item.title">{{ item.title }}</div>
               </div>
             </div>
@@ -197,7 +197,9 @@ const selectItem = ref();
 const activeModule = computed(() => {
   return state.activeModule;
 });
-
+const getImageUrl = (url) => {
+  return new URL(url, import.meta.url).href;
+};
 const imageList = computed(() => {
   if (state.imageList) {
     state.imageList.forEach((item) => {
