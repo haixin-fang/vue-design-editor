@@ -1,6 +1,8 @@
 <template>
   <div class="main">
-    <div class="box" @click="onRestore" ref="box" />
+    <div class="box" @click="onRestore" ref="box">
+      <span>{{ unitType }}</span>
+    </div>
     <div class="ruler horizontal">
       <!-- :selectedRanges="horRange" -->
       <!-- :DragPosFormat="DragPosFormat" -->
@@ -292,6 +294,7 @@ export default {
       container,
       clearRule,
       lockRule,
+      unitType,
       unit,
       OnChangeGuides,
       textFormat(value) {
@@ -379,6 +382,15 @@ export default {
     background: #f6f7f9;
     box-sizing: border-box;
     z-index: 21;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    justify-content: center;
+    color: #9da3ac;
+    span {
+      transform: translate(1px, -1px) scale(0.83);
+      transform-origin: center;
+    }
   }
   .box:before,
   .box:after {
