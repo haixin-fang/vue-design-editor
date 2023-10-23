@@ -1,9 +1,9 @@
 <template>
   <div class="main">
-    <div class="box" @click="onRestore" ref="box">
+    <div class="box" @click="onRestore" ref="box" v-show="ruleShow">
       <span>{{ unitType }}</span>
     </div>
-    <div class="ruler horizontal">
+    <div class="ruler horizontal" v-show="ruleShow">
       <!-- :selectedRanges="horRange" -->
       <!-- :DragPosFormat="DragPosFormat" -->
       <!-- :textFormat="textFormat" -->
@@ -45,7 +45,7 @@
     <!-- :selectedRanges="verRange" -->
     <!-- :textFormat="verTextFormat" -->
 
-    <div class="ruler vertical">
+    <div class="ruler vertical" v-show="ruleShow">
       <Guides
         ref="guides2"
         type="vertical"
@@ -84,7 +84,12 @@
       </div>
     </div>
     <div class="edit-bottom">
-      <ScaleBar :clearRule="clearRule" :lockRule="lockRule" />
+      <ScaleBar
+        :clearRule="clearRule"
+        :lockRule="lockRule"
+        :ruleShow="ruleShow"
+        :onRuleShow="onRuleShow"
+      />
     </div>
   </div>
 </template>
@@ -110,6 +115,7 @@ export default {
     const handler = inject("handler");
     const lockGuides = ref(true);
     const unit = ref();
+    const ruleShow = ref(true);
     const { state } = useStore();
     const workspace = computed(() => {
       const viewportTransform = handler.value?.canvas?.viewportTransform;
@@ -281,6 +287,10 @@ export default {
       e.isChange = false;
     }
 
+    function onRuleShow() {
+      ruleShow.value = !ruleShow.value;
+    }
+
     return {
       /**
        * 标尺相关逻辑
@@ -297,6 +307,8 @@ export default {
       unitType,
       unit,
       OnChangeGuides,
+      ruleShow,
+      onRuleShow,
       textFormat(value) {
         // if (shellPoi.value) {
         //   if (value == shellPoi.value.left) {

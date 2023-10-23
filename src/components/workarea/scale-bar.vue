@@ -48,6 +48,7 @@
             <template v-for="item in menu" :key="item.type">
               <div
                 class="dc-layout-scale-bar-item__menu__item"
+                :class="getActive(item) ? 'menu-active' : ''"
                 @click="handlerEvent(item)"
               >
                 <span class="dc-layout-scale-bar-item__menu__item--main">{{
@@ -63,7 +64,14 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted, onUnmounted, defineProps } from "vue";
+import {
+  ref,
+  inject,
+  onMounted,
+  onUnmounted,
+  defineProps,
+  computed,
+} from "vue";
 const menuShow = ref(false);
 const scaleDom = ref();
 const canvas = inject("canvas");
@@ -75,25 +83,34 @@ const props = defineProps({
   lockRule: {
     type: Function,
   },
+  onRuleShow: {
+    type: Function,
+  },
+  ruleShow: {
+    type: Boolean,
+  },
 });
 // 强制执行getZoom()
 const random = ref();
+
 const menus = ref([
   [
     {
       type: "showRule",
       title: "显示标尺和参考线",
-      status: true,
+      status: () => {
+        props.onRuleShow();
+      },
     },
   ],
   [
-    {
-      type: "lock",
-      title: "锁定参考线",
-      status: () => {
-        props.lockRule();
-      },
-    },
+    // {
+    //   type: "lock",
+    //   title: "锁定参考线",
+    //   status: () => {
+    //     props.lockRule();
+    //   },
+    // },
     {
       type: "clearRule",
       title: "清除参考线",
@@ -159,6 +176,19 @@ function handlerEvent(item) {
 
 function showMenu() {
   menuShow.value = !menuShow.value;
+}
+
+function getActive(menu) {
+  const viewportTransform = handler.value?.canvas?.viewportTransform || [];
+  const one = handler.value?.workareaHandler?.one();
+  switch (menu.type) {
+    case "showRule":
+      return props.ruleShow;
+    case "size":
+      return menu.value == viewportTransform[0];
+    case "fullscreen":
+      return one == viewportTransform[0];
+  }
 }
 function getZoom() {
   if (canvas.value) {
@@ -248,6 +278,9 @@ onUnmounted(() => {
     transition: all 0.2s;
     &:hover {
       background-color: var(--background-color-primary-hover);
+    }
+    &.menu-active {
+      font-weight: 600;
     }
     .dc-layout-scale-bar-item__menu__item--main {
       display: flex;

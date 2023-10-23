@@ -95,6 +95,7 @@ const observe = () => {
 };
 
 function init() {
+  if (!el) return;
   if (!resizeObserver) {
     observe();
   }
