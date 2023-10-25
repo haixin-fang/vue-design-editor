@@ -16,7 +16,9 @@
                 v-for="(item, vindex) in list.list"
                 :key="vindex"
               >
-                <img :src="item.icon" alt="" />
+                <div class="img-icon">
+                  <img :src="item.icon" alt="" />
+                </div>
                 <div class="name" v-if="item.title">{{ item.title }}</div>
               </div>
             </div>
@@ -324,6 +326,10 @@ function handleDragStart(e, item, i) {
               -webkit-user-select: none;
               user-select: none;
               padding: 15px 22px;
+              .img-icon {
+                width: 40px;
+                height: 40px;
+              }
               &:nth-child(3n + 3) {
                 margin-right: 0;
               }

@@ -22,7 +22,7 @@ export const modulelist = [
   {
     type: "text",
     text: "文字",
-    drag: false,
+    drag: true,
     icon: "icon-text",
     options: {
       type: "FontCustom",

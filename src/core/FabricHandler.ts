@@ -8,6 +8,16 @@ class FabricHandler {
     this.handler = handler;
   }
 
+  textbox({ text, ...option }: any) {
+    option.fontSize = parseInt(option.fontSize);
+    delete option.type;
+    return new fabric.Textbox(text, option);
+  }
+
+  FontCustom(option: WorkareaObject) {
+    return this.textbox(option);
+  }
+
   async Image(options: WorkareaObject) {
     const type =
       this.handler.utils.getFileType(options.src) ||

@@ -4,7 +4,11 @@
       <Nav />
     </template>
     <template #module>
-      <sidebar @module="selectedModule" v-show="loadOk" />
+      <sidebar
+        @module="selectedModule"
+        v-show="loadOk"
+        :onAddItem="onAddItem"
+      />
     </template>
     <template #left>
       <resource />

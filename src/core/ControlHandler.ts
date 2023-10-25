@@ -190,7 +190,7 @@ class ControlsPlugin {
       borderOpacityWhenMoving: 1,
     });
     // textbox保持一致
-    // fabric.Textbox.prototype.controls = fabric.Object.prototype.controls;
+    fabric.Textbox.prototype.controls = fabric.Object.prototype.controls;
   }
 
   destroy() {
