@@ -52,7 +52,7 @@ class UtilsHandler {
     return findObject;
   };
 
-  fileToBase64 = async (file: File) => {
+  fileToBase64 = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -61,6 +61,28 @@ class UtilsHandler {
         resolve(e.target.result);
       };
     });
+  };
+
+  fileUpload = async (file: File, name: string) => {
+    const src = await this.handler.utils.fileToBase64(file);
+    if (src) {
+      const image = new Image();
+      image.src = src;
+      const options: any = {
+        name,
+        type: "Image",
+        src,
+      };
+      await new Promise((resolve) => {
+        image.onload = () => {
+          options.width = image.width;
+          options.height = image.height;
+          resolve(true);
+        };
+      });
+
+      this.handler.add(options);
+    }
   };
 }
 

@@ -139,24 +139,7 @@ export default {
       },
       async uploadImage(e) {
         if (e) {
-          const name = e.name;
-          const src = await handler.value.utils.fileToBase64(e.raw);
-          const image = new Image();
-          image.src = src;
-          const options = {
-            name,
-            type: "Image",
-            src,
-          };
-          await new Promise((resolve) => {
-            image.onload = () => {
-              options.width = image.width;
-              options.height = image.height;
-              resolve();
-            };
-          });
-
-          handler.value.add(options);
+          handler.value.utils.fileUpload(e.raw, e.name);
         }
       },
     };
