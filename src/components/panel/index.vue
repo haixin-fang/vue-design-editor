@@ -6,7 +6,7 @@
           v-for="panelItem in headtool"
           :key="panelItem.text"
           @click="selectTabs(panelItem)"
-          v-show="getActiveTab(panelItem)"
+          v-show="onTabShow(panelItem)"
         >
           <button class="tab-button">
             <div class="tab-content" :class="getActiveClass(panelItem)">
@@ -57,7 +57,13 @@
               <div class="gda-space-item">
                 <div class="panel-row">
                   <div class="panel-row__content">
-                    <button class="right-canvas-resize-btn">上传图片</button>
+                    <el-upload
+                      :show-file-list="false"
+                      :auto-upload="false"
+                      :on-change="uploadImage"
+                    >
+                      <button class="right-canvas-resize-btn">上传图片</button>
+                    </el-upload>
                   </div>
                 </div>
               </div>
@@ -83,19 +89,24 @@
 </template>
 <script>
 import { panel } from "@/constants/panel";
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 import Bar from "./bar.vue";
 import WorkspaceSize from "./workspace-size.vue";
+import { ElUpload } from "element-plus";
 export default {
-  components: { Bar, WorkspaceSize },
+  components: { Bar, WorkspaceSize, ElUpload },
   setup() {
     const headtool = ref(panel);
     const type = ref("design");
     const sizeShow = ref(false);
     const { state } = useStore();
+    const handler = inject("handler");
     const workspace = computed(() => {
       return state.workspace;
+    });
+    const selectedItem = computed(() => {
+      return state.selectedItem;
     });
     return {
       headtool,
@@ -112,6 +123,41 @@ export default {
       },
       getActiveTab(panelItem) {
         return panelItem.type == type.value;
+      },
+      onTabShow(item) {
+        if (item.showList) {
+          if (selectedItem.value) {
+            const { type } = selectedItem.value;
+            if (item.showList.includes(type)) {
+              return true;
+            }
+            return false;
+          }
+        } else {
+          return true;
+        }
+      },
+      async uploadImage(e) {
+        if (e) {
+          const name = e.name;
+          const src = await handler.value.utils.fileToBase64(e.raw);
+          const image = new Image();
+          image.src = src;
+          const options = {
+            name,
+            type: "Image",
+            src,
+          };
+          await new Promise((resolve) => {
+            image.onload = () => {
+              options.width = image.width;
+              options.height = image.height;
+              resolve();
+            };
+          });
+
+          handler.value.add(options);
+        }
       },
     };
   },
@@ -241,6 +287,12 @@ export default {
                 width: 100%;
                 font: var(--text-p1-regular);
                 color: var(--text-color-primary);
+                > div {
+                  width: 100%;
+                  ::v-deep .el-upload {
+                    width: 100%;
+                  }
+                }
                 .right-canvas-resize-btn {
                   color: #222529;
                   background-color: #f1f2f4;
@@ -285,7 +337,7 @@ export default {
     background: white;
     z-index: 2;
     align-items: center;
-    justify-content: space-between;
+    // justify-content: space-between;
     height: 36px;
     padding: 0 16px;
 

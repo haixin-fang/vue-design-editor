@@ -7,7 +7,7 @@ class UtilsHandler {
     this.handler = handler;
   }
   getFileType(src: string) {
-    if (!src) return;
+    if (!src || src.indexOf("base64") != -1) return;
     src = src.split("?")[0];
     if (src) {
       const number = src.lastIndexOf(".");
@@ -50,6 +50,17 @@ class UtilsHandler {
       return null;
     }
     return findObject;
+  };
+
+  fileToBase64 = async (file: File) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function (e: any) {
+        // e.target.result 即为base64结果
+        resolve(e.target.result);
+      };
+    });
   };
 }
 

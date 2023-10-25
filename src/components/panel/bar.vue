@@ -71,11 +71,9 @@ export default {
   props: {
     onChange: {
       type: Function,
-      default: () => {},
     },
     canvasRef: {
       type: Object,
-      default: {},
     },
     barShow: {
       type: Array,

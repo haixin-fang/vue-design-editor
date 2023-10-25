@@ -14,7 +14,7 @@
 </template>
 <script>
 import { modulelist } from "../../constants/sidebar";
-import { ref, computed } from "vue";
+import { ref, computed, toRaw } from "vue";
 import { useStore } from "vuex";
 export default {
   props: {
@@ -24,7 +24,7 @@ export default {
   },
   setup(props) {
     const list = ref(modulelist);
-    const { onAddItem } = props;
+    const { onAddItem } = toRaw(props);
     const { state, commit } = useStore();
     const activeModule = computed(() => {
       return state.activeModule;

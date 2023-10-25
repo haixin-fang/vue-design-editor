@@ -63,9 +63,19 @@ class FabricHandler {
 
   async addImage(obj: FabricImage) {
     const { src, ...otherOption } = obj;
-    const { objectOption } = this.handler;
+    const { objectOption, workareaHandler } = this.handler;
     const imageUrl = new Image();
     imageUrl.crossOrigin = "Anonymous"; //这里是主要添加的属性
+    if (
+      otherOption.width &&
+      workareaHandler &&
+      workareaHandler.workspace &&
+      otherOption.width > workareaHandler.workspace?.width
+    ) {
+      const scale = workareaHandler.workspace.width / otherOption.width;
+      otherOption.scaleX = scale;
+      otherOption.scaleY = scale;
+    }
     const canvasImage = new fabric.Image(imageUrl, {
       clipPath: null,
       ...JSON.parse(JSON.stringify(objectOption)),

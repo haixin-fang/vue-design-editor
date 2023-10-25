@@ -199,9 +199,7 @@ const selectItem = ref();
 const activeModule = computed(() => {
   return state.activeModule;
 });
-const getImageUrl = (url) => {
-  return new URL(url, import.meta.url).href;
-};
+
 const imageList = computed(() => {
   if (state.imageList) {
     state.imageList.forEach((item) => {
