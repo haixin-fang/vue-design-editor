@@ -63,16 +63,18 @@ class FabricHandler {
 
   async addImage(obj: FabricImage) {
     const { src, ...otherOption } = obj;
-    const { objectOption, workareaHandler } = this.handler;
+    const { objectOption } = this.handler;
     const imageUrl = new Image();
     imageUrl.crossOrigin = "Anonymous"; //这里是主要添加的属性
+    // 只有在单个图片素材导入情况下才自适应
+    const { width } = this.handler.workareaHandler.workspace as any;
     if (
       otherOption.width &&
-      workareaHandler &&
-      workareaHandler.workspace &&
-      otherOption.width > workareaHandler.workspace?.width
+      this.handler.workareaHandler &&
+      this.handler.workareaHandler.workspace &&
+      otherOption.width > width
     ) {
-      const scale = workareaHandler.workspace.width / otherOption.width;
+      const scale = width / otherOption.width;
       otherOption.scaleX = scale;
       otherOption.scaleY = scale;
     }

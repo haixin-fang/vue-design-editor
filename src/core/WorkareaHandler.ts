@@ -5,7 +5,7 @@ import { WorkareaOption, FabricRect } from "@/types/utils";
 class EditorWorkspace {
   canvas: fabric.Canvas;
   workspaceEl: HTMLElement;
-  workspace: (FabricRect & WorkareaOption) | null;
+  workspace: FabricRect | null;
   option: WorkareaOption;
   handler: Handler;
   unitEnum: any;

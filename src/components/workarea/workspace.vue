@@ -144,7 +144,7 @@ export default {
       () => workspace.value?.zoom,
       () => {
         initRuleRange();
-        updateUnit();
+        // updateUnit();
       },
       { deep: true }
     );
