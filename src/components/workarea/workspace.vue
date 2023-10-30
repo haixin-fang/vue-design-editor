@@ -144,15 +144,9 @@ export default {
       () => workspace.value?.zoom,
       () => {
         initRuleRange();
-        updateUnit();
+        // updateUnit();
       },
       { deep: true }
-    );
-    watch(
-      () => unitType.value,
-      () => {
-        updateUnit();
-      }
     );
     watch(
       () => [state.workspace?.width, state.workspace?.height, unitType.value],
