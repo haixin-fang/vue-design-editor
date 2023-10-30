@@ -120,7 +120,7 @@ export default {
     const workspace = computed(() => {
       const viewportTransform = handler.value?.canvas?.viewportTransform;
       const workspace = state.workspace;
-      updateUnit();
+      // updateUnit();
       if (viewportTransform && workspace) {
         return {
           left: parseInt(viewportTransform[4]),
@@ -144,12 +144,18 @@ export default {
       () => workspace.value?.zoom,
       () => {
         initRuleRange();
-        // updateUnit();
+        updateUnit();
       },
       { deep: true }
     );
     watch(
       () => unitType.value,
+      () => {
+        updateUnit();
+      }
+    );
+    watch(
+      () => [state.workspace?.width, state.workspace?.height, unitType.value],
       () => {
         updateUnit();
       }
