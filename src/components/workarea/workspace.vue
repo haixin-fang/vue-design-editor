@@ -151,7 +151,7 @@ export default {
     watch(
       () => [state.workspace?.width, state.workspace?.height, unitType.value],
       () => {
-        updateUnit();
+        // updateUnit();
       }
     );
     onMounted(() => {
