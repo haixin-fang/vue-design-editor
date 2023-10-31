@@ -141,7 +141,7 @@
                 ></el-image>
               </div>
             </template>
-            <template v-else>
+            <template v-else-if="icons && icons.length > 0">
               <div
                 class="detail-item"
                 v-for="(item, index) in icons"

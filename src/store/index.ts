@@ -35,18 +35,22 @@ export default createStore({
   },
   actions: {
     getMaterial({ commit }) {
+      commit("Ok", []);
+      return;
       const pro = [];
       pro.push(
         request({
           url: "https://haixin-fang.github.io/vue-design-editor-static/imglist.json",
           timeout: 10000,
-        }).catch((e) => console.error(e))
+          methods: "get",
+        })
       );
       pro.push(
         request({
           url: "https://haixin-fang.github.io/icons/bootstrap-icons.json",
           timeout: 10000,
-        }).catch((e) => console.error(e))
+          methods: "get",
+        })
       );
       Promise.all(pro).then((data) => {
         if (Array.isArray(data)) {

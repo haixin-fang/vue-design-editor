@@ -41,7 +41,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     if (!response) {
-      debugger;
       // return res
       console.log("无数据返回");
       throw new Error("无数据返回");
