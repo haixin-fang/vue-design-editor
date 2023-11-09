@@ -172,15 +172,17 @@ function showMenu() {
 }
 
 function getActive(menu) {
-  const viewportTransform = handler.value?.canvas?.viewportTransform || [];
-  const one = handler.value?.workareaHandler?.one();
-  switch (menu.type) {
-    case "showRule":
-      return props.ruleShow;
-    case "size":
-      return menu.value == viewportTransform[0];
-    case "fullscreen":
-      return one == viewportTransform[0];
+  if (menuShow.value) {
+    const viewportTransform = handler.value?.canvas?.viewportTransform || [];
+    const one = handler.value?.workareaHandler?.one();
+    switch (menu.type) {
+      case "showRule":
+        return props.ruleShow;
+      case "size":
+        return menu.value == viewportTransform[0];
+      case "fullscreen":
+        return one == viewportTransform[0];
+    }
   }
 }
 function getZoom() {

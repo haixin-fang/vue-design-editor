@@ -121,6 +121,8 @@ function onAdd(target) {
 async function init() {
   await loadPro;
   commit("setWorkarea", handler.value?.workareaHandler.workspace);
+  await nextTick();
+  workspace.value.initRuleRange();
 }
 </script>
 <style lang="scss" scoped>

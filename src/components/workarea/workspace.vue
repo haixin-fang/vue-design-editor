@@ -120,7 +120,6 @@ export default {
     const workspace = computed(() => {
       const viewportTransform = handler.value?.canvas?.viewportTransform;
       const workspace = state.workspace;
-      // updateUnit();
       if (viewportTransform && workspace) {
         return {
           left: parseInt(viewportTransform[4]),
@@ -144,18 +143,16 @@ export default {
       () => workspace.value?.zoom,
       () => {
         initRuleRange();
-        // updateUnit();
       },
       { deep: true }
     );
     watch(
       () => [state.workspace?.width, state.workspace?.height, unitType.value],
       () => {
-        // updateUnit();
+        updateUnit();
       }
     );
     onMounted(() => {
-      initRuleRange();
       window.addEventListener("resize", onResize);
       container.value.addEventListener("scroll", onScroll);
     });
@@ -201,7 +198,7 @@ export default {
         let unitValue = handler.value.workareaHandler?.unitEnum[unitType.value];
         const maxUnit = {
           px: 1000,
-          cm: 100,
+          cm: 3000,
           mm: 100,
         };
         let zoom = workspace.value?.zoom
@@ -222,8 +219,6 @@ export default {
         if (unitType.value == "mm") {
           unitValue /= 3;
         }
-        console.log("zoom", zoom);
-        console.log("unitValue", unitValue);
         if (offsetWidth / width < offsetHeight / height) {
           unit.value = parseInt(
             (Math.floor(
@@ -309,6 +304,7 @@ export default {
       OnChangeGuides,
       ruleShow,
       onRuleShow,
+      initRuleRange,
       textFormat(value) {
         // if (shellPoi.value) {
         //   if (value == shellPoi.value.left) {

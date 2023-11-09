@@ -176,8 +176,10 @@ const unit = computed(() => {
   return workspace.value?.unit;
 });
 function changeSize(size) {
-  workspace.value.sizeId = size.id;
-  workspace.value.unit = size?.material.unit;
+  workspace.value.set({
+    sizeId: size.id,
+    unit: size?.material.unit,
+  });
   handler.value?.workareaHandler.setSize(
     parseInt(size?.material.width),
     parseInt(size?.material.height)
