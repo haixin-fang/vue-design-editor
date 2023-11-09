@@ -87,6 +87,10 @@ class FabricHandler {
     await this.handler.setImage(canvasImage, src);
     return canvasImage;
   }
+
+  async background(options: WorkareaObject) {
+    return this.addImage(options);
+  }
 }
 
 export default FabricHandler;

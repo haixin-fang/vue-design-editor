@@ -151,9 +151,9 @@ class Handler implements HandlerOptions {
     };
     const newOption = Object.assign(
       {},
+      option,
       JSON.parse(JSON.stringify(this.objectOption)),
       obj,
-      option,
       {
         container: this.container,
       }

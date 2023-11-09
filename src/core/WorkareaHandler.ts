@@ -144,6 +144,62 @@ class EditorWorkspace {
     this.workspace?.set("unit", unit);
   }
 
+  async setBgImage(options: WorkareaOption) {
+    const { src } = options || {};
+
+    const editable = false;
+    const option = {
+      editable,
+      hasControls: editable, // 当设置为 `false` 时，对象的控件不显示并且不能用于操作对象
+      hasBorders: editable, // 当设置为 `false` 时，对象的控制边界不会被渲染
+      selectable: editable, // 当设置为 `false` 时，不能选择对象进行修改（使用基于点单击或基于组的选择）。但事件仍然发生在它身上。
+      lockMovementX: !editable, // 当`true`时，对象水平移动被锁定
+      lockMovementY: !editable, //当`true`时，对象垂直移动被锁定
+      name: "背景图片",
+      type: "background",
+      src,
+    };
+    // 去重, 防止出现多个背景元素
+    const bgObject = this.handler.canvas.getObjects().find((item: any) => {
+      if (item.id == "background") {
+        return item;
+      }
+    });
+    if (bgObject && bgObject.src !== src) {
+      this.handler.canvas.remove(bgObject);
+    }
+    const { width, height } = this.workspace as any;
+    let scale = 1;
+    if (width > options.width || height > options.height) {
+      if (width / options.width > height / options.height) {
+        scale = width / options.width;
+      } else {
+        scale = height / options.height;
+      }
+    }
+    // 居中
+    const bgHeight = options.height * scale;
+    const bgWidth = options.width * scale;
+    const bgLeft = width / 2 - bgWidth / 2;
+    const bgTop = height / 2 - bgHeight / 2;
+    const optionss = Object.assign({}, option, {
+      name: "背景图片",
+      type: "background",
+      id: "background",
+      src,
+      left: bgLeft,
+      top: bgTop,
+      scaleX: scale,
+      scaleY: scale,
+      originX: "left",
+      originY: "top",
+      // lockMovementX: true,
+      // lockMovementY: true
+    });
+    const newbgObject = await this.handler.add(optionss);
+    this.setCenterFromObject(newbgObject);
+  }
+
   _getScale() {
     const viewPortWidth = this.workspaceEl.offsetWidth;
     const viewPortHeight = this.workspaceEl.offsetHeight;

@@ -63,14 +63,14 @@ class UtilsHandler {
     });
   };
 
-  fileUpload = async (file: File, name: string) => {
+  fileUpload = async (file: File, name: string, type: string) => {
     const src = await this.handler.utils.fileToBase64(file);
     if (src) {
       const image = new Image();
       image.src = src;
       const options: any = {
         name,
-        type: "Image",
+        type,
         src,
       };
       await new Promise((resolve) => {
@@ -80,8 +80,11 @@ class UtilsHandler {
           resolve(true);
         };
       });
-
-      this.handler.add(options);
+      if (type == "background") {
+        this.handler.workareaHandler.setBgImage(options);
+      } else {
+        this.handler.add(options);
+      }
     }
   };
 }

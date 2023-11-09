@@ -35,8 +35,6 @@ export default createStore({
   },
   actions: {
     getMaterial({ commit }) {
-      commit("Ok", []);
-      return;
       const pro = [];
       pro.push(
         request({

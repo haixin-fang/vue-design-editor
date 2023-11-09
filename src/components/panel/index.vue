@@ -60,7 +60,7 @@
                     <el-upload
                       :show-file-list="false"
                       :auto-upload="false"
-                      :on-change="uploadImage"
+                      :on-change="(e) => uploadImage(e, 'background')"
                     >
                       <button class="right-canvas-resize-btn">上传图片</button>
                     </el-upload>
@@ -137,9 +137,9 @@ export default {
           return true;
         }
       },
-      async uploadImage(e) {
+      async uploadImage(e, type = "Image") {
         if (e) {
-          handler.value.utils.fileUpload(e.raw, e.name);
+          handler.value.utils.fileUpload(e.raw, e.name, type);
         }
       },
     };
