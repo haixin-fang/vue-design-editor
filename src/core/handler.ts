@@ -139,7 +139,13 @@ class Handler implements HandlerOptions {
     });
   };
 
-  add = async (obj: any) => {
+  /**
+   *
+   * @param obj 元素配置
+   * @param isAdd 是否添加到画布中
+   * @returns
+   */
+  add = async (obj: any, isAdd: boolean = true) => {
     const { editable } = this;
     const option = {
       editable: editable,
@@ -171,25 +177,27 @@ class Handler implements HandlerOptions {
 
     if (_.isPromise(createdObj)) {
       const res = await createdObj;
-      createdObj = this.addContent(res);
+      createdObj = this.addContent(res, isAdd);
       // createdObj.then((res) => {
       //     this.addContent(res, obj);
       // });
     } else if (createdObj) {
-      createdObj = this.addContent(createdObj);
+      createdObj = this.addContent(createdObj, isAdd);
     }
     return createdObj;
   };
 
-  addContent(createdObj: any) {
+  addContent(createdObj: any, isAdd: boolean) {
     const { onAdd } = this;
     if (createdObj) {
       if (!createdObj.id) {
         createdObj.id = this.utils.uuid();
       }
-      this.canvas.add(createdObj);
-      if (onAdd) {
-        onAdd(createdObj);
+      if (isAdd) {
+        this.canvas.add(createdObj);
+        if (onAdd) {
+          onAdd(createdObj);
+        }
       }
     }
     this.canvas.renderAll();

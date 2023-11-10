@@ -1,11 +1,12 @@
 import { fabric } from "fabric";
 import Handler from "./handler";
-import { WorkareaOption, FabricRect } from "@/types/utils";
+import { WorkareaOption, FabricRect, FabricImage } from "@/types/utils";
 
 class EditorWorkspace {
   canvas: fabric.Canvas;
   workspaceEl: HTMLElement;
   workspace: FabricRect | null;
+  bgObject: FabricImage | null;
   option: WorkareaOption;
   handler: Handler;
   unitEnum: any;
@@ -18,6 +19,7 @@ class EditorWorkspace {
     }
     this.workspaceEl = container;
     this.workspace = null;
+    this.bgObject = null;
     this.option = handler.workareaOption;
     this.initialize();
     // 像素转换, 1cm等于37.9像素等
@@ -146,7 +148,6 @@ class EditorWorkspace {
 
   async setBgImage(options: WorkareaOption) {
     const { src } = options || {};
-
     const editable = false;
     const option = {
       editable,
@@ -155,49 +156,30 @@ class EditorWorkspace {
       selectable: editable, // 当设置为 `false` 时，不能选择对象进行修改（使用基于点单击或基于组的选择）。但事件仍然发生在它身上。
       lockMovementX: !editable, // 当`true`时，对象水平移动被锁定
       lockMovementY: !editable, //当`true`时，对象垂直移动被锁定
+      lockScalingX: !editable,
+      lockScalingY: !editable,
+      hoverCursor: "default",
       name: "背景图片",
       type: "background",
       src,
     };
     // 去重, 防止出现多个背景元素
     const bgObject = this.handler.canvas.getObjects().find((item: any) => {
-      if (item.id == "background") {
+      if (item.type == "background") {
         return item;
       }
     });
     if (bgObject && bgObject.src !== src) {
       this.handler.canvas.remove(bgObject);
     }
-    const { width, height } = this.workspace as any;
-    let scale = 1;
-    if (width > options.width || height > options.height) {
-      if (width / options.width > height / options.height) {
-        scale = width / options.width;
-      } else {
-        scale = height / options.height;
-      }
+    const poiOptions = this._getBgPosition(options);
+    const newOptions = Object.assign({}, option, poiOptions);
+    this.bgObject = await this.handler.add(newOptions, false);
+    if (this.bgObject) {
+      this.canvas.add(this.bgObject);
+      // 置底但比workspace高一层
     }
-    // 居中
-    const bgHeight = options.height * scale;
-    const bgWidth = options.width * scale;
-    const bgLeft = width / 2 - bgWidth / 2;
-    const bgTop = height / 2 - bgHeight / 2;
-    const optionss = Object.assign({}, option, {
-      name: "背景图片",
-      type: "background",
-      id: "background",
-      src,
-      left: bgLeft,
-      top: bgTop,
-      scaleX: scale,
-      scaleY: scale,
-      originX: "left",
-      originY: "top",
-      // lockMovementX: true,
-      // lockMovementY: true
-    });
-    const newbgObject = await this.handler.add(optionss);
-    this.setCenterFromObject(newbgObject);
+    this.canvas.requestRenderAll();
   }
 
   _getScale() {
@@ -211,6 +193,32 @@ class EditorWorkspace {
       return viewPortWidth / this.option.width;
     } // 按照宽度缩放
     return viewPortHeight / this.option.height;
+  }
+
+  /**
+   * 获取背景图的位置(缩放比例和left、top)
+   */
+  _getBgPosition(bgObject: WorkareaOption) {
+    const { width, height } = this.workspace as any;
+    let scale = 1;
+    if (width > bgObject.width || height > bgObject.height) {
+      if (width / bgObject.width > height / bgObject.height) {
+        scale = width / bgObject.width;
+      } else {
+        scale = height / bgObject.height;
+      }
+    }
+    // 居中
+    const bgHeight = bgObject.height * scale;
+    const bgWidth = bgObject.width * scale;
+    const bgLeft = width / 2 - bgWidth / 2;
+    const bgTop = height / 2 - bgHeight / 2;
+    return {
+      left: bgLeft,
+      top: bgTop,
+      scaleX: scale,
+      scaleY: scale,
+    };
   }
 
   // 放大
