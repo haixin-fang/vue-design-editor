@@ -4,6 +4,7 @@ import UitlsHandler from "./UtilsHandler";
 import ImageHandler from "./ImageHandler";
 import ControlHandler from "./ControlHandler";
 import { WorkareaOption, WorkareaObject, FabricImage } from "@/types/utils";
+import { objectOption } from "../constants/workspace";
 
 import _ from "@/utils/_";
 
@@ -21,7 +22,7 @@ export interface HandlerOption {
    */
   container?: HTMLDivElement;
   utils?: UitlsHandler;
-  onAdd?: (target: WorkareaObject) => void;
+  onAdd: (target: WorkareaObject) => void;
   init?: () => void;
   /**
    * 画布是否可编辑
@@ -45,7 +46,7 @@ class Handler implements HandlerOptions {
   public fabricObjects: FabricHandler & FabricOptions;
   public utils: UitlsHandler;
   public imageHandler: ImageHandler;
-  public objectOption?: any;
+  public objectOption?: any = objectOption;
   private control: ControlHandler;
   public canvas;
   public onAdd;
@@ -139,13 +140,72 @@ class Handler implements HandlerOptions {
     });
   };
 
+  // 置顶
+  bringToFront(createdObj: WorkareaObject) {
+    const target = createdObj || this.canvas.getActiveObject();
+    if (target) {
+      this.canvas.bringToFront(target);
+    }
+  }
+  // 上移一层
+  bringForward(createdObj: WorkareaObject) {
+    const target = createdObj || this.canvas.getActiveObject();
+    if (target) {
+      this.canvas.bringForward(target);
+    }
+  }
+
+  // 置底
+  sendToBack(createdObj: WorkareaObject | any) {
+    const target = createdObj || this.canvas.getActiveObject();
+    if (target) {
+      // 如果有背景元素则元素再前一层
+      let isbg = false;
+      this.canvas.getObjects().find((item: WorkareaObject) => {
+        if (item.type == "background") {
+          isbg = true;
+          return item;
+        }
+      });
+      this.canvas.sendToBack(target);
+      this.canvas.sendToBack(this.canvas.getObjects()[1]);
+      console.log(this.canvas.getObjects());
+
+      if (isbg && target.type != "background") {
+        this.bringForward(target);
+      }
+    }
+  }
+  // 下移一层
+  sendBackwards(item: WorkareaObject) {
+    const target = item || this.canvas.getActiveObject();
+    if (target) {
+      // 兼容画布,使画布始终在底部
+      const firstObject = this.canvas.getObjects()[1];
+      if (firstObject.id === target.id) {
+        return;
+      }
+      this.canvas.sendBackwards(target);
+    }
+  }
+
+  set = async (selectedItem: WorkareaObject, changedValues: any) => {
+    const activeObject = selectedItem || this.canvas.getActiveObject();
+    const changedKey = Object.keys(changedValues)[0];
+    const changedValue = changedValues[changedKey];
+    activeObject.set(changedKey, changedValue);
+    activeObject.setCoords();
+    this.canvas.renderAll();
+    this.onAdd(activeObject);
+  };
+
   /**
    *
    * @param obj 元素配置
    * @param isAdd 是否添加到画布中
    * @returns
    */
-  add = async (obj: any, isAdd: boolean = true) => {
+  add = async (obj: any, isAdd = true) => {
     const { editable } = this;
     const option = {
       editable: editable,
@@ -195,9 +255,9 @@ class Handler implements HandlerOptions {
       }
       if (isAdd) {
         this.canvas.add(createdObj);
-        if (onAdd) {
-          onAdd(createdObj);
-        }
+      }
+      if (onAdd) {
+        onAdd(createdObj);
       }
     }
     this.canvas.renderAll();

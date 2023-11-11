@@ -55,7 +55,7 @@
           <div class="panel-block__content">
             <div class="gda-space-item">
               <div class="gda-space-item">
-                <div class="panel-row">
+                <div class="panel-row" v-if="!bgObject">
                   <div class="panel-row__content">
                     <el-upload
                       :show-file-list="false"
@@ -66,13 +66,59 @@
                     </el-upload>
                   </div>
                 </div>
+                <div class="panel-row panel-row-bg" v-else>
+                  <div class="panel-row-image">
+                    <img :src="bgObject.src" alt="" v-if="bgObject.src" />
+                    <div class="panel-row__content" v-show="false">
+                      <el-upload
+                        :show-file-list="false"
+                        :auto-upload="false"
+                        :on-change="(e) => uploadImage(e, 'background')"
+                      >
+                        <button class="right-canvas-resize-btn">
+                          上传图片
+                        </button>
+                      </el-upload>
+                    </div>
+                    <div class="background-edit-control__tools">
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        content="翻转"
+                        placement="top"
+                      >
+                        <i
+                          class="iconfont icon-zuoyoufanzhuan"
+                          @click="copy"
+                        ></i>
+                      </el-tooltip>
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        content="分离图片"
+                        placement="top"
+                      >
+                        <i class="iconfont icon-zhaopian" @click="copy"></i>
+                      </el-tooltip>
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        content="删除"
+                        placement="top"
+                      >
+                        <i class="iconfont icon-delete" @click="copy"></i>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                  <Opactiy :onChange="onChange" />
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="panel-block">
           <div class="panel-block__header">
-            <div class="panel-block__header-title">背景图</div>
+            <div class="panel-block__header-title">背景色</div>
             <div class="panel-block__header-action">
               <div class="popup">
                 <div class="swatch--shape-round"></div>
@@ -93,15 +139,22 @@ import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 import Bar from "./bar.vue";
 import WorkspaceSize from "./workspace-size.vue";
-import { ElUpload } from "element-plus";
+import Opactiy from "./opactiy.vue";
+import { ElUpload, ElTooltip } from "element-plus";
 export default {
-  components: { Bar, WorkspaceSize, ElUpload },
+  components: { Bar, WorkspaceSize, ElUpload, ElTooltip, Opactiy },
+  props: {
+    onChange: {
+      type: Function,
+    },
+  },
   setup() {
     const headtool = ref(panel);
     const type = ref("design");
     const sizeShow = ref(false);
     const { state } = useStore();
     const handler = inject("handler");
+    const bgObject = ref(null);
     const workspace = computed(() => {
       return state.workspace;
     });
@@ -112,6 +165,7 @@ export default {
       headtool,
       sizeShow,
       workspace,
+      bgObject,
       getActiveClass(panelItem) {
         if (Array.isArray(panelItem.type)) {
           return panelItem.type.includes(type.value) ? "tabActive" : "";
@@ -139,7 +193,14 @@ export default {
       },
       async uploadImage(e, type = "Image") {
         if (e) {
-          handler.value.utils.fileUpload(e.raw, e.name, type);
+          const imageObject = await handler.value.utils.fileUpload(
+            e.raw,
+            e.name,
+            type
+          );
+          if (type == "background" && imageObject) {
+            bgObject.value = imageObject;
+          }
         }
       },
     };
@@ -256,6 +317,90 @@ export default {
               width: 100%;
               text-align: left;
               justify-content: space-between;
+              &.panel-row-bg {
+                flex-direction: column;
+                .opacity {
+                  margin-top: 8px;
+                  width: 100%;
+                }
+              }
+              .panel-row-image {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 120px;
+                padding: 16px;
+                background: #f1f2f4;
+                width: 100%;
+                position: relative;
+                border-radius: var(--border-radius-large);
+                .background-edit-control__tools {
+                  position: absolute;
+                  top: 8px;
+                  right: 4px;
+                  z-index: 1;
+                  display: flex;
+                  align-items: center;
+                  i {
+                    width: 24px;
+                    height: 24px;
+                    padding: 0;
+                    font-size: 14px;
+                    border-radius: var(--border-radius-small);
+                    background: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 4px;
+                  }
+                }
+                &:hover {
+                  .panel-row__content {
+                    display: block !important;
+                    position: absolute;
+                    bottom: 8px;
+                    z-index: 1;
+                    width: 60%;
+                    padding: 0 8px;
+                    animation: background-edit-control-fade-in 0.5s forwards;
+                    .right-canvas-resize-btn {
+                      background-color: white;
+                      height: 30px;
+                    }
+                  }
+                  &::before {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.08);
+                    border-radius: var(--border-radius-large);
+                    content: "";
+                    opacity: 0;
+                    animation: background-edit-control-fade-in 0.5s forwards;
+                  }
+                }
+                img {
+                  max-width: 100%;
+                  max-height: 100%;
+                  object-fit: contain;
+                  background-color: #b8b8b8;
+                  border-radius: var(--border-radius-large);
+                  background-image: linear-gradient(
+                      45deg,
+                      #ccc 25%,
+                      transparent 0
+                    ),
+                    linear-gradient(45deg, transparent 75%, #ccc 0),
+                    linear-gradient(45deg, #ccc 25%, transparent 0),
+                    linear-gradient(45deg, transparent 75%, #ccc 0);
+                  background-position: 0 0, 5px 5px, 5px 5px, 10px 10px;
+                  background-size: 10px 10px;
+                  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.08),
+                    0px 4px 12px 0px rgba(0, 0, 0, 0.04);
+                }
+              }
               .panel-row__label {
                 width: 80px;
                 font: var(--text-p1-regular);
@@ -347,6 +492,15 @@ export default {
         font: var(--text-p1-bold);
       }
     }
+  }
+}
+
+@keyframes background-edit-control-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

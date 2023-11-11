@@ -80,11 +80,13 @@ class UtilsHandler {
           resolve(true);
         };
       });
+      let marterialObject;
       if (type == "background") {
-        this.handler.workareaHandler.setBgImage(options);
+        marterialObject = this.handler.workareaHandler.setBgImage(options);
       } else {
-        this.handler.add(options);
+        marterialObject = this.handler.add(options);
       }
+      return marterialObject;
     }
   };
 }

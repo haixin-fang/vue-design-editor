@@ -19,3 +19,10 @@ export const workareaOption = {
   // type: "workarea",
   isElement: false,
 };
+export const objectOption = {
+  rotation: 0,
+  centeredRotation: true,
+  strokeUniform: true,
+  hoverCursor: "pointer",
+  visible: true,
+};

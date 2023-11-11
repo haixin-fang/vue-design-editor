@@ -52,8 +52,8 @@ const menu = ref();
       height: 40px;
       font-size: 16px;
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.04);
       &:hover {
+        background: rgba(0, 0, 0, 0.04);
       }
       svg {
         width: 20px;

@@ -27,6 +27,7 @@ export default createStore({
       state.icons = value;
     },
     setActivateItem(state, value) {
+      state.selectedItem = null;
       state.selectedItem = value;
     },
     setWorkarea(state, value) {

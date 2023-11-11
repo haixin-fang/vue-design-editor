@@ -34,7 +34,7 @@
       />
     </template>
     <template #propsPanel>
-      <panel />
+      <panel :onChange="onChange" />
     </template>
   </framework>
 </template>
@@ -123,6 +123,10 @@ async function init() {
   commit("setWorkarea", handler.value?.workareaHandler.workspace);
   await nextTick();
   workspace.value.initRuleRange();
+}
+
+function onChange(selectedItem, changedValues) {
+  handler.value.set(selectedItem, changedValues);
 }
 </script>
 <style lang="scss" scoped>

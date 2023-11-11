@@ -1,6 +1,11 @@
 import { fabric } from "fabric";
 import Handler from "./handler";
-import { WorkareaOption, FabricRect, FabricImage } from "@/types/utils";
+import {
+  WorkareaOption,
+  FabricRect,
+  FabricImage,
+  WorkareaObject,
+} from "@/types/utils";
 
 class EditorWorkspace {
   canvas: fabric.Canvas;
@@ -139,6 +144,11 @@ class EditorWorkspace {
       this.canvas.clipPath = cloned;
       this.canvas.requestRenderAll();
     });
+    // 背景图自适应
+    if (this.bgObject) {
+      const obj = this._getBgPosition(this.bgObject);
+      this.bgObject.set(obj);
+    }
     if (cb) cb(this.workspace.left, this.workspace.top);
   }
 
@@ -178,8 +188,11 @@ class EditorWorkspace {
     if (this.bgObject) {
       this.canvas.add(this.bgObject);
       // 置底但比workspace高一层
+      this.handler.sendToBack(this.bgObject);
     }
     this.canvas.requestRenderAll();
+
+    return this.bgObject;
   }
 
   _getScale() {
@@ -198,7 +211,7 @@ class EditorWorkspace {
   /**
    * 获取背景图的位置(缩放比例和left、top)
    */
-  _getBgPosition(bgObject: WorkareaOption) {
+  _getBgPosition(bgObject: FabricImage | any) {
     const { width, height } = this.workspace as any;
     let scale = 1;
     if (width > bgObject.width || height > bgObject.height) {
