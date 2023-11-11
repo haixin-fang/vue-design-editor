@@ -22,6 +22,7 @@
             :objectOption="defaultOption"
             :onAdd="onAdd"
             :init="init"
+            :onSelect="onSelect"
           />
         </template>
       </Workspace>
@@ -116,6 +117,17 @@ function onAddItem(item) {
 function onAdd(target) {
   commit("setActivateItem", target);
   handler.value.select(target);
+}
+
+function onSelect(target) {
+  if (target && target.id) {
+    // if (this.selectedItem && target.id === this.selectedItem.id) {
+    //     return;
+    // }
+    commit("setActivateItem", target);
+    return;
+  }
+  commit("setActivateItem", null);
 }
 // 初始化完成后执行的逻辑
 async function init() {

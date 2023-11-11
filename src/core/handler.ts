@@ -23,6 +23,7 @@ export interface HandlerOption {
   container?: HTMLDivElement;
   utils?: UitlsHandler;
   onAdd: (target: WorkareaObject) => void;
+  onSelect: (target: any) => void;
   init?: () => void;
   /**
    * 画布是否可编辑
@@ -50,6 +51,7 @@ class Handler implements HandlerOptions {
   private control: ControlHandler;
   public canvas;
   public onAdd;
+  public onSelect;
   public init;
   public editable;
   public container;
@@ -61,6 +63,7 @@ class Handler implements HandlerOptions {
 
     this.onAdd = options.onAdd;
     this.init = options.init;
+    this.onSelect = options.onSelect;
 
     this.workareaHandler = new WorkareaHandler(this);
     this.fabricObjects = new FabricHandler(this);
@@ -196,7 +199,17 @@ class Handler implements HandlerOptions {
     activeObject.set(changedKey, changedValue);
     activeObject.setCoords();
     this.canvas.renderAll();
-    this.onAdd(activeObject);
+    this.onSelect(activeObject);
+  };
+
+  remove = (selectedItem: any) => {
+    const target = selectedItem || this.canvas.getActiveObject();
+    this.canvas.remove(target);
+    this.canvas.requestRenderAll();
+    if (target.dispose) {
+      target.dispose();
+    }
+    this.onSelect(null);
   };
 
   /**

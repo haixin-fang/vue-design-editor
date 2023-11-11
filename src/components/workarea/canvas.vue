@@ -38,6 +38,12 @@ export default {
       type: Function,
     },
     /**
+     * 选择元素
+     */
+    onSelect: {
+      type: Function,
+    },
+    /**
      * 画布加载完成后初始化回调
      */
     init: {

@@ -11,7 +11,7 @@ class EditorWorkspace {
   canvas: fabric.Canvas;
   workspaceEl: HTMLElement;
   workspace: FabricRect | null;
-  bgObject: FabricImage | null;
+  bgObject: any | null;
   option: WorkareaOption;
   handler: Handler;
   unitEnum: any;
@@ -174,11 +174,7 @@ class EditorWorkspace {
       src,
     };
     // 去重, 防止出现多个背景元素
-    const bgObject = this.handler.canvas.getObjects().find((item: any) => {
-      if (item.type == "background") {
-        return item;
-      }
-    });
+    const bgObject = this.getBgObject();
     if (bgObject && bgObject.src !== src) {
       this.handler.canvas.remove(bgObject);
     }
@@ -193,6 +189,38 @@ class EditorWorkspace {
     this.canvas.requestRenderAll();
 
     return this.bgObject;
+  }
+
+  // 获取背景元素
+  getBgObject() {
+    return this.handler.canvas.getObjects().find((item: any) => {
+      if (item.type == "background") {
+        return item;
+      }
+    });
+  }
+
+  bgToImage() {
+    if (this.bgObject) {
+      const editable = true;
+      const option = {
+        editable,
+        hasControls: editable,
+        hasBorders: editable,
+        selectable: editable,
+        lockMovementX: !editable,
+        lockMovementY: !editable,
+        lockScalingX: !editable,
+        lockScalingY: !editable,
+        hoverCursor: "default",
+        name: "",
+        type: "Image",
+      };
+      this.bgObject.set(option);
+      this.canvas.renderAll();
+      this.handler.onSelect(this.bgObject);
+      this.bgObject = null;
+    }
   }
 
   _getScale() {

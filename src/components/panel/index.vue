@@ -89,7 +89,7 @@
                       >
                         <i
                           class="iconfont icon-zuoyoufanzhuan"
-                          @click="copy"
+                          @click="onflip"
                         ></i>
                       </el-tooltip>
                       <el-tooltip
@@ -98,7 +98,10 @@
                         content="分离图片"
                         placement="top"
                       >
-                        <i class="iconfont icon-zhaopian" @click="copy"></i>
+                        <i
+                          class="iconfont icon-zhaopian"
+                          @click="bgToImage"
+                        ></i>
                       </el-tooltip>
                       <el-tooltip
                         class="item"
@@ -106,7 +109,7 @@
                         content="删除"
                         placement="top"
                       >
-                        <i class="iconfont icon-delete" @click="copy"></i>
+                        <i class="iconfont icon-delete" @click="remove"></i>
                       </el-tooltip>
                     </div>
                   </div>
@@ -148,24 +151,31 @@ export default {
       type: Function,
     },
   },
-  setup() {
+  setup(props) {
     const headtool = ref(panel);
     const type = ref("design");
     const sizeShow = ref(false);
     const { state } = useStore();
     const handler = inject("handler");
-    const bgObject = ref(null);
+    const canvas = inject("canvas");
     const workspace = computed(() => {
       return state.workspace;
     });
     const selectedItem = computed(() => {
       return state.selectedItem;
     });
+    const bgObject = computed(() => {
+      if (selectedItem.value && selectedItem.value.type == "background") {
+        return selectedItem.value;
+      }
+      return null;
+    });
     return {
       headtool,
       sizeShow,
       workspace,
       bgObject,
+      selectedItem,
       getActiveClass(panelItem) {
         if (Array.isArray(panelItem.type)) {
           return panelItem.type.includes(type.value) ? "tabActive" : "";
@@ -193,15 +203,19 @@ export default {
       },
       async uploadImage(e, type = "Image") {
         if (e) {
-          const imageObject = await handler.value.utils.fileUpload(
-            e.raw,
-            e.name,
-            type
-          );
-          if (type == "background" && imageObject) {
-            bgObject.value = imageObject;
-          }
+          await handler.value.utils.fileUpload(e.raw, e.name, type);
         }
+      },
+      onflip() {
+        props.onChange(bgObject.value, { scaleX: -1 });
+        const zoom = canvas.value.getZoom();
+        handler.value.workareaHandler.setZoomAuto(zoom);
+      },
+      bgToImage() {
+        handler.value.workareaHandler.bgToImage();
+      },
+      remove() {
+        handler.value.remove(bgObject.value);
       },
     };
   },
