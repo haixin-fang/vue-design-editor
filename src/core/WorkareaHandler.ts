@@ -252,8 +252,8 @@ class EditorWorkspace {
     // 居中
     const bgHeight = bgObject.height * scale;
     const bgWidth = bgObject.width * scale;
-    const bgLeft = width / 2 - bgWidth / 2;
-    const bgTop = height / 2 - bgHeight / 2;
+    const bgLeft = -(bgWidth - width) / 2;
+    const bgTop = -(bgHeight - height) / 2;
     return {
       left: bgLeft,
       top: bgTop,

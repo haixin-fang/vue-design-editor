@@ -123,8 +123,24 @@
           <div class="panel-block__header">
             <div class="panel-block__header-title">背景色</div>
             <div class="panel-block__header-action">
-              <div class="popup">
-                <div class="swatch--shape-round"></div>
+              <div class="popup popover">
+                <div
+                  ref="colorRound"
+                  class="swatch--shape-round"
+                  @click="colorShow = true"
+                ></div>
+                <popover
+                  :dom="colorRound"
+                  :show="colorShow"
+                  placement="left"
+                  @close="colorShow = false"
+                >
+                  <template v-slot="{ setSlotRef }">
+                    <div class="content" :ref="(el) => setSlotRef(el)">
+                      <Color />
+                    </div>
+                  </template>
+                </popover>
               </div>
             </div>
           </div>
@@ -144,8 +160,10 @@ import Bar from "./bar.vue";
 import WorkspaceSize from "./workspace-size.vue";
 import Opactiy from "./opactiy.vue";
 import { ElUpload, ElTooltip } from "element-plus";
+// const Color = () => import("./color.vue");
+import Color from "./color.vue";
 export default {
-  components: { Bar, WorkspaceSize, ElUpload, ElTooltip, Opactiy },
+  components: { Bar, WorkspaceSize, ElUpload, ElTooltip, Opactiy, Color },
   props: {
     onChange: {
       type: Function,
@@ -155,6 +173,8 @@ export default {
     const headtool = ref(panel);
     const type = ref("design");
     const sizeShow = ref(false);
+    const colorShow = ref(false);
+    const colorRound = ref();
     const { state } = useStore();
     const handler = inject("handler");
     const canvas = inject("canvas");
@@ -175,6 +195,8 @@ export default {
       sizeShow,
       workspace,
       bgObject,
+      colorRound,
+      colorShow,
       selectedItem,
       getActiveClass(panelItem) {
         if (Array.isArray(panelItem.type)) {

@@ -44,6 +44,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end
+  placement: {
+    type: String,
+    default: "",
+  },
 });
 let el = null,
   resizeObserver = null;
@@ -75,6 +80,7 @@ onMounted(() => {
       if (!res) {
         // 点击弹窗区域外
         emit("close");
+        console.log("close");
       }
     }
   });
@@ -106,31 +112,47 @@ function init() {
     popoverLeft = 0,
     originX = 0,
     originY = 0;
-  if (top > offsetHeight + 10) {
-    popoverTop = top - offsetHeight - 10;
-    originY = offsetHeight + 10;
-    // 向上展示
-    if (offsetWidth < right) {
-      // 默认向右上角
-      popoverLeft = left + width - offsetWidth;
+  if (!props.placement) {
+    if (top > offsetHeight + 10) {
+      popoverTop = top - offsetHeight - 10;
+      originY = offsetHeight + 10;
+      // 向上展示
+      if (offsetWidth < right) {
+        // 默认向右上角
+        popoverLeft = left + width - offsetWidth;
+        originX = offsetWidth;
+      } else {
+        popoverLeft = left;
+        originX = 0;
+      }
+    } else if (bottom > offsetHeight + 10) {
+      popoverTop = top + height + 10;
+      originY = 10;
+      // 向下展示
+      if (offsetWidth < right) {
+        // 默认向右下角
+        popoverLeft = left + width - offsetWidth;
+        originX = offsetWidth;
+      } else {
+        popoverLeft = left;
+        originX = 0;
+      }
+    } else if (offsetWidth < left) {
+      // 左中
+      if (top + bottom > offsetHeight) {
+        popoverTop = top - offsetHeight / 2;
+        originY = popoverTop + height;
+      }
+      popoverLeft = left - offsetWidth - 10;
       originX = offsetWidth;
-    } else {
-      popoverLeft = left;
-      originX = 0;
     }
-  } else if (bottom > offsetHeight + 10) {
-    popoverTop = top + height + 10;
-    originY = 10;
-    // 向下展示
-    if (offsetWidth < right) {
-      // 默认向右下角
-      popoverLeft = left + width - offsetWidth;
-      originX = offsetWidth;
-    } else {
-      popoverLeft = left;
-      originX = 0;
-    }
+  } else if (props.placement == "left") {
+    popoverTop = top - offsetHeight / 2;
+    originY = popoverTop + height;
+    popoverLeft = left - offsetWidth - 10;
+    originX = offsetWidth;
   }
+
   popover.value.style.left = popoverLeft + "px";
   popover.value.style.top = popoverTop + "px";
   popover.value.style.transformOrigin = `${originX}px ${originY}px`;
