@@ -67,6 +67,7 @@ export default {
         stopContextMenu: true, // 禁止默认右键菜单
         enableRetinaScaling: true,
         controlsAboveOverlay: true,
+        preserveObjectStacking: true,
       });
       canvas = new fabric.Canvas(`canvas_${id.value}`, canvasOptions);
       canvas.renderAll();

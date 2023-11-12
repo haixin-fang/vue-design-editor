@@ -183,11 +183,10 @@ class EditorWorkspace {
     this.bgObject = await this.handler.add(newOptions, false);
     if (this.bgObject) {
       this.canvas.add(this.bgObject);
-      // 置底但比workspace高一层
-      this.handler.sendToBack(this.bgObject);
+      this.canvas.sendToBack(this.bgObject);
+      this.canvas.bringForward(this.bgObject);
     }
     this.canvas.requestRenderAll();
-
     return this.bgObject;
   }
 
@@ -218,6 +217,7 @@ class EditorWorkspace {
       };
       this.bgObject.set(option);
       this.canvas.renderAll();
+      console.log(this.canvas.getObjects());
       this.handler.onSelect(this.bgObject);
       this.bgObject = null;
     }

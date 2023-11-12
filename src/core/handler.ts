@@ -99,9 +99,18 @@ class Handler implements HandlerOptions {
       this.canvas.discardActiveObject();
       this.canvas.setActiveObject(findObject);
       this.canvas.requestRenderAll();
+      this.onSelect(findObject);
     }
   };
 
+  cancelSelect = (obj?: WorkareaObject, canvas = this.canvas) => {
+    const target = obj || canvas.getActiveObject();
+    if (target) {
+      canvas.discardActiveObject();
+      canvas.renderAll();
+      this.onSelect(null);
+    }
+  };
   setImage = (obj: FabricImage, source: any) => {
     return new Promise((resolve) => {
       if (!this.canvas.contextTop) return;
