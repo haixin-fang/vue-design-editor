@@ -178,7 +178,7 @@ export default {
   align-items: center;
   .slide {
     width: 60%;
-    ::v-deep .el-slider {
+    :deep(.el-slider) {
       //   .el-slider__runway {
       //     height: 3px;
       //   }
@@ -227,7 +227,7 @@ export default {
     background: #f6f7f9;
   }
   .slide-text {
-    ::v-deep .data-input {
+    :deep(.data-input) {
       .input-number .input-number-input {
         color: #bec3c9 !important;
       }

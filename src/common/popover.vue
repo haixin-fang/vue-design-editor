@@ -23,6 +23,7 @@ import {
   defineEmits,
 } from "vue";
 import { throttle } from "lodash-es";
+import { onClickOutside } from "@vueuse/core";
 /**
  * 要求引用该组件的组件 类名中要加popover
  */
@@ -84,6 +85,10 @@ onMounted(() => {
       }
     }
   });
+  // onClickOutside(popover, () => {
+  //   emit("close");
+  //   console.log("close");
+  // });
 });
 
 onUnmounted(() => {

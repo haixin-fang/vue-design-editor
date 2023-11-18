@@ -202,10 +202,18 @@ class Handler implements HandlerOptions {
   }
 
   set = async (selectedItem: WorkareaObject, changedValues: any) => {
-    const activeObject = selectedItem || this.canvas.getActiveObject();
+    const activeObject =
+      selectedItem ||
+      this.canvas.getActiveObject() ||
+      this.workareaHandler.workspace;
     const changedKey = Object.keys(changedValues)[0];
     const changedValue = changedValues[changedKey];
-    activeObject.set(changedKey, changedValue);
+    if (changedKey == "gradient") {
+      this.fabricObjects[changedKey](activeObject, changedValue);
+      // this.colors.set(activeObject, changedKey, changedValue);
+    } else {
+      activeObject.set(changedKey, changedValue);
+    }
     activeObject.setCoords();
     this.canvas.renderAll();
     this.onSelect(activeObject);

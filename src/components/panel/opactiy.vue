@@ -59,14 +59,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-::v-deep .data-input {
+:deep(.data-input) {
   background: white;
   &:hover {
     border-color: white;
     background: rgba(0, 0, 0, 0.04);
   }
 }
-.opacity ::v-deep .el-slider__bar {
+.opacity :depp(.el-slider__bar) {
   background-color: #d9dcdf !important;
 }
 </style>

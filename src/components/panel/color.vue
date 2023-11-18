@@ -1,17 +1,19 @@
 <template>
+  <!-- :gradientType="'linear'" -->
   <color-picker
     :pureColor="pureColor"
     :gradientColor="gradientColor"
     :isWidget="true"
     :useType="useType"
     @pureColorChange="onPureColor"
-    @gradientColorChange="gradientColorChange"
+    @gradientDataChange="gradientColorChange"
   />
 </template>
 <script setup>
-import { ColorPicker } from "vue3-colorpicker";
-import "vue3-colorpicker/style.css";
-import { ref, defineProps } from "vue";
+import { ColorPicker } from "colorpickers";
+import "colorpickers/style.css";
+import { defineProps, defineEmits } from "vue";
+const emit = defineEmits(["select"]);
 defineProps({
   useType: { type: String, default: "both" },
   pureColor: {
@@ -24,10 +26,13 @@ defineProps({
   },
 });
 function onPureColor(color) {
-  console.log(color);
+  emit("select", {
+    fill: color,
+  });
 }
 function gradientColorChange(color) {
-  console.log("grandient", color);
+  emit("select", {
+    gradient: color,
+  });
 }
-
 </script>

@@ -137,7 +137,7 @@
                 >
                   <template v-slot="{ setSlotRef }">
                     <div class="content" :ref="(el) => setSlotRef(el)">
-                      <Color />
+                      <Color @select="selectColor" />
                     </div>
                   </template>
                 </popover>
@@ -190,10 +190,14 @@ export default {
       }
       return null;
     });
+    function selectColor(value) {
+      props.onChange(null, value);
+    }
     return {
       headtool,
       sizeShow,
       workspace,
+      selectColor,
       bgObject,
       colorRound,
       colorShow,
@@ -453,7 +457,7 @@ export default {
                 color: var(--text-color-primary);
                 > div {
                   width: 100%;
-                  ::v-deep .el-upload {
+                  :deep(.el-upload) {
                     width: 100%;
                   }
                 }

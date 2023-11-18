@@ -472,7 +472,7 @@ function handleDragStart(e, item, i) {
     }
   }
 }
-::v-deep img[draggable="true"] {
+:deep(img[draggable="true"]) {
   cursor: pointer;
 }
 .Image {

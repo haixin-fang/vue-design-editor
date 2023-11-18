@@ -18,6 +18,62 @@ class FabricHandler {
     return this.textbox(option);
   }
 
+  gradient(selectedItem: WorkareaObject, options: any) {
+    if (!selectedItem) {
+      selectedItem = this.handler.canvas.getActiveObject();
+    }
+    let gradient;
+    if (options.type == "radial-gradient") {
+      const { width, height } = selectedItem;
+      const r = width > height ? width / 2 : height / 2;
+      const coords = {
+        r1: r, // 该属性仅径向渐变可用，外圆半径
+        r2: 0, // 该属性仅径向渐变可用，外圆半径
+        x1: width / 2, // 焦点的x坐标
+        y1: height / 2, // 焦点的y坐标
+        x2: width / 2, // 中心点的x坐标
+        y2: height / 2, // 中心点的y坐标
+      };
+      const colorStops = options.colorStops.map((item: any) => {
+        const offset = Number(item.length.value) / 100;
+        const [red, green, blue, alpha] = item.value;
+        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+        return { offset, color };
+      });
+      gradient = new fabric.Gradient({
+        type: "radial",
+        coords,
+        colorStops,
+      });
+    } else {
+      // 渐变
+      const {
+        x0: x1,
+        y0: y1,
+        x1: x2,
+        y1: y2,
+      } = this.handler.utils.calculateGradientCoordinate(
+        selectedItem.width,
+        selectedItem.height,
+        Number(options.orientation.value)
+      );
+      const colorStops = options.colorStops.map((item: any) => {
+        const offset = Number(item.length.value) / 100;
+        const [red, green, blue, alpha] = item.value;
+        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+        return { offset, color };
+      });
+      gradient = new fabric.Gradient({
+        type: "linear", // linear or radial
+        gradientUnits: "pixels", // pixels or pencentage 像素 或者 百分比
+        coords: { x1, y1, x2, y2 }, // 至少2个坐标对(x1，y1和x2，y2)将定义渐变在对象上的扩展方式
+        colorStops: colorStops,
+      });
+    }
+
+    selectedItem.set({ fill: gradient });
+  }
+
   async Image(options: WorkareaObject) {
     const type =
       this.handler.utils.getFileType(options.src) ||
