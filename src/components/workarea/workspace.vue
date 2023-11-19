@@ -98,6 +98,7 @@ import Guides from "@/common/guides/index.vue";
 import { ref, onMounted, onUnmounted, computed, inject, watch } from "vue";
 import { useStore } from "vuex";
 import ScaleBar from "./scale-bar.vue";
+import { useEventListener } from "@vueuse/core";
 export default {
   components: {
     Guides,
@@ -153,11 +154,8 @@ export default {
       }
     );
     onMounted(() => {
-      window.addEventListener("resize", onResize);
-      container.value.addEventListener("scroll", onScroll);
-    });
-    onUnmounted(() => {
-      window.removeEventListener("resize", onResize);
+      useEventListener(window, "resize", onResize);
+      useEventListener(container.value, "scroll", onScroll);
     });
     /**
      * 标尺
