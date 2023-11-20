@@ -15,7 +15,7 @@
           </button>
         </div>
       </div>
-      <div class="tab-panel-bloack_content">
+      <div class="tab-panel-bloack_content" v-if="selectedItem">
         <Bar />
       </div>
     </div>
@@ -127,6 +127,7 @@
                 <div
                   ref="colorRound"
                   class="swatch--shape-round"
+                  :style="`${getBgColor()}`"
                   @click="colorShow = true"
                 ></div>
                 <popover
@@ -230,6 +231,15 @@ export default {
       async uploadImage(e, type = "Image") {
         if (e) {
           await handler.value.utils.fileUpload(e.raw, e.name, type);
+        }
+      },
+      getBgColor() {
+        if (!workspace.value) return;
+        if (typeof workspace.value.fill == "string") {
+          debugger;
+          return `background: ${workspace.value.fill}`;
+        } else if (workspace.value.backgroundColor) {
+          return `background: ${workspace.value.backgroundColor}`;
         }
       },
       onflip() {

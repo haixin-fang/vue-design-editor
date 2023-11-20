@@ -23,7 +23,7 @@
     "@scena/guides": "^0.28.0",
     "@vueuse/core": "^10.6.0",
     "axios": "^1.4.0",
-    "colorpickers": "^1.0.2",
+    "colorpickers": "^1.0.4",
     "core-js": "^3.8.3",
     "element-plus": "^2.3.8",
     "epic-spinners": "^2.0.0",

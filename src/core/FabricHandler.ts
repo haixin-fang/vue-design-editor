@@ -71,7 +71,10 @@ class FabricHandler {
       });
     }
 
-    selectedItem.set({ fill: gradient });
+    selectedItem.set({
+      fill: gradient,
+      backgroundColor: options.gradientColor,
+    });
   }
 
   async Image(options: WorkareaObject) {
