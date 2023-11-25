@@ -150,7 +150,7 @@ const types = computed(() => {
 // 其他限制
 // 需要https环境，如果是本地localhost 不受此限制。
 // 不能在 iframe 内使用，因为被认为不安全
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "render"]);
 
 tryOnMounted(() => {
   useEventListener(dragArea.value, "dragover", onDragOver);
@@ -233,8 +233,9 @@ async function onGuide() {
     const { ext }: any = file;
     if (mapStrategyType[ext]) {
       const handler = mapStrategyType[ext]();
-      const json = await handler.init(files);
-      console.log("json", json);
+      const data = await handler.init(files);
+      console.log("json", JSON.stringify(data.json));
+      emit("render", data);
     }
   }
 }

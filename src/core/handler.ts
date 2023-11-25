@@ -5,7 +5,7 @@ import ImageHandler from "./ImageHandler";
 import ControlHandler from "./ControlHandler";
 import { WorkareaOption, WorkareaObject, FabricImage } from "@/types/utils";
 import { objectOption, propertiesToInclude } from "../constants/workspace";
-
+import { v4 as uuid } from "uuid";
 import _ from "@/utils/_";
 
 export interface HandlerOption {
@@ -50,6 +50,7 @@ class Handler implements HandlerOptions {
   public objectOption?: any = objectOption;
   private control: ControlHandler;
   public propertiesToInclude = propertiesToInclude;
+  public isimporting = false;
   public canvas;
   public onAdd;
   public onSelect;
@@ -235,10 +236,6 @@ class Handler implements HandlerOptions {
    * @returns
    */
   exportJSON = () => {
-    const target = this.canvas.getActiveObject();
-    if (target && target.type == "FontCustom" && target.getSelectedText()) {
-      this.cancelSelect();
-    }
     const objects = this.canvas.toObject(this.propertiesToInclude).objects;
     return objects;
   };
@@ -265,6 +262,208 @@ class Handler implements HandlerOptions {
     });
     this.canvas.setViewportTransform(viewportTransform);
     return image;
+  };
+
+  // 判断是否是空白画布
+  isEmptyCanvas() {
+    const json = this.exportJSON().filter((item) => {
+      if (
+        item.id != "workarea" ||
+        (item.id == "workarea" && item.fill != "#fff")
+      ) {
+        return item;
+      }
+    });
+    if (!(json && Array.isArray(json))) {
+      return true;
+    }
+    if (json.length > 1) {
+      return false;
+    } else if (json.length == 1) {
+      if (json[0].backgroundColor != "rgba(0,0,0,0)") {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return true;
+  }
+
+  importGroup = async (group, render = false, activeObject) => {
+    const objects = group.objects;
+    if (!Array.isArray(objects)) return [];
+    const res = [];
+    for (let i = 0; i < objects.length; i++) {
+      if (!objects[i]) continue;
+      if (objects[i].type == "group") {
+        const groupObject = await this.importGroup(
+          objects[i],
+          false,
+          activeObject
+        );
+        if (render) {
+          delete objects[i].objects;
+          delete objects[i].width;
+          delete objects[i].height;
+        }
+        const { editable } = this;
+        const option = {
+          editable,
+          locked: editable,
+          hasControls: editable, // 当设置为 `false` 时，对象的控件不显示并且不能用于操作对象
+          hasBorders: editable, // 当设置为 `false` 时，对象的控制边界不会被渲染
+          selectable: editable, // 当设置为 `false` 时，不能选择对象进行修改（使用基于点单击或基于组的选择）。但事件仍然发生在它身上。
+          lockMovementX: !editable, // 当`true`时，对象水平移动被锁定
+          lockMovementY: !editable, //当`true`时，对象垂直移动被锁定
+        };
+        const object = new fabric.Group(groupObject, {
+          ...objects[i],
+          ...option,
+          ...JSON.parse(JSON.stringify(this.objectOption)),
+        });
+        if (!object.id) {
+          object.id = uuid();
+        }
+        res.push(object);
+      } else {
+        if (render) {
+          delete objects[i].width;
+          delete objects[i].height;
+        }
+        if (!objects[i].id) {
+          objects[i].id = uuid();
+        }
+        if (activeObject && activeObject.id == objects[i].id) {
+          activeObject.left = objects[i].left;
+          activeObject.top = objects[i].top;
+          res.push(activeObject);
+        } else {
+          const object = await this.add(objects[i], false);
+          res.push(object);
+        }
+      }
+    }
+    return res;
+  };
+
+  public toGroup = (target?: FabricObject) => {
+    const activeObject =
+      target || (this.canvas.getActiveObject() as fabric.ActiveSelection);
+    if (!activeObject) {
+      return null;
+    }
+    if (activeObject.type !== "activeSelection") {
+      return null;
+    }
+    const group = activeObject.toGroup() as FabricObject<fabric.Group>;
+    group.set({
+      id: uuid(),
+      name: "New group",
+      type: "group",
+      ...this.objectOption,
+    });
+    if (this.onSelect) {
+      this.onSelect(group);
+    }
+    this.canvas.renderAll();
+    console.log(JSON.stringify(this.canvas.getObjects()));
+    return group;
+  };
+
+  public nogroup = (target?: FabricObject) => {
+    const activeObject =
+      target || (this.canvas.getActiveObject() as fabric.Group);
+    if (!activeObject) {
+      return;
+    }
+    if (activeObject.type !== "group") {
+      return;
+    }
+    const activeSelection = activeObject.toActiveSelection();
+    if (this.onSelect) {
+      this.onSelect(activeSelection);
+    }
+    this.canvas.renderAll();
+    return activeSelection;
+  };
+
+  importGroupJSON = async (obj) => {
+    const res = await this.importGroup(obj);
+    delete obj.objects;
+    const { editable } = this;
+    const option = {
+      editable,
+      locked: !editable,
+      hasControls: editable, // 当设置为 `false` 时，对象的控件不显示并且不能用于操作对象
+      hasBorders: editable, // 当设置为 `false` 时，对象的控制边界不会被渲染
+      selectable: editable, // 当设置为 `false` 时，不能选择对象进行修改（使用基于点单击或基于组的选择）。但事件仍然发生在它身上。
+      lockMovementX: !editable, // 当`true`时，对象水平移动被锁定
+      lockMovementY: !editable, //当`true`时，对象垂直移动被锁定
+    };
+    delete obj.width;
+    delete obj.height;
+    if (obj.name == "装饰") {
+      debugger;
+    }
+    // const group = this.canvas.group(res);
+    const group = new fabric.Group(res, {
+      ...option,
+      ...JSON.parse(JSON.stringify(this.objectOption)),
+      ...obj,
+    });
+    if (!group.id) {
+      group.id = uuid();
+    }
+    if (!this.canvas.contextTop) return;
+    this.canvas.add(group);
+    this.canvas.renderAll();
+  };
+
+  /**
+   *
+   * @param {*} json
+   */
+  importJSON = async (json) => {
+    console.log("json", json);
+    if (!this.canvas.contextTop) return;
+    this.isimporting = true;
+    try {
+      if (!this.isEmptyCanvas()) {
+        this.canvas.clear();
+      }
+      if (typeof json === "string") {
+        json = JSON.parse(json);
+      }
+      const workarea = json.find((obj) => obj.id == "workarea");
+      // this.workareaHandler.initialize();
+      if (workarea && this.workareaHandler.workspace) {
+        this.workareaHandler.setSize(workarea.width, workarea.height);
+      } else {
+        this.workareaHandler.initialize();
+        this.workareaHandler.setSize(workarea.width, workarea.height);
+      }
+      for (let i = 0; i < json.length; i++) {
+        const obj = json[i];
+        if (obj.id == "workarea") continue;
+        if (obj.id == "background") {
+          await this.workareaHandler.setBgImage(obj);
+          continue;
+        } else if (obj.type == "group") {
+          await this.importGroupJSON(obj);
+          continue;
+        }
+        if (!obj.id) {
+          obj.id = uuid();
+        }
+        await this.add(obj, true);
+      }
+      this.canvas.renderAll();
+    } catch (e) {
+      console.error(e);
+    }
+    this.isimporting = false;
+    this.cancelSelect();
+    console.log(this.canvas.getObjects());
   };
 
   /**
@@ -305,11 +504,17 @@ class Handler implements HandlerOptions {
 
     if (_.isPromise(createdObj)) {
       const res = await createdObj;
+      if (!isAdd) {
+        return res;
+      }
       createdObj = this.addContent(res, isAdd);
       // createdObj.then((res) => {
       //     this.addContent(res, obj);
       // });
     } else if (createdObj) {
+      if (!isAdd) {
+        return createdObj;
+      }
       createdObj = this.addContent(createdObj, isAdd);
     }
     return createdObj;

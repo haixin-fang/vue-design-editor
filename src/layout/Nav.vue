@@ -31,7 +31,7 @@
     <popover :dom="menu" :show="guideShow" @close="guideShow = false">
       <template v-slot="{ setSlotRef }">
         <div :ref="(el) => setSlotRef(el)">
-          <upload-file @close="guideShow = false" />
+          <upload-file @close="guideShow = false" @render="onRender" />
         </div>
       </template>
     </popover>
@@ -66,6 +66,192 @@ const handler = inject("handler");
 const menu = ref();
 const menuShow = ref(false);
 const guideShow = ref(false);
+const a = [
+  {
+    type: "rect",
+    version: "5.3.0",
+    originX: "left",
+    originY: "top",
+    left: 0,
+    top: 0,
+    width: 260,
+    height: 641,
+    fill: "#fff",
+    stroke: null,
+    strokeWidth: 1,
+    strokeDashArray: null,
+    strokeLineCap: "butt",
+    strokeDashOffset: 0,
+    strokeLineJoin: "miter",
+    strokeUniform: false,
+    strokeMiterLimit: 4,
+    scaleX: 1,
+    scaleY: 1,
+    angle: 0,
+    flipX: false,
+    flipY: false,
+    opacity: 1,
+    shadow: null,
+    visible: true,
+    backgroundColor: "",
+    fillRule: "nonzero",
+    paintFirst: "fill",
+    globalCompositeOperation: "source-over",
+    skewX: 0,
+    skewY: 0,
+    rx: 0,
+    ry: 0,
+    id: "workarea",
+    name: "",
+  },
+  {
+    type: "group",
+    version: "5.3.0",
+    originX: "left",
+    originY: "top",
+    left: 30.4755,
+    top: 231.5064,
+    width: 220,
+    height: 64.16,
+    fill: "rgb(0,0,0)",
+    stroke: null,
+    strokeWidth: 0,
+    strokeDashArray: null,
+    strokeLineCap: "butt",
+    strokeDashOffset: 0,
+    strokeLineJoin: "miter",
+    strokeUniform: true,
+    strokeMiterLimit: 4,
+    scaleX: 1,
+    scaleY: 1,
+    angle: 0,
+    flipX: false,
+    flipY: false,
+    opacity: 1,
+    shadow: null,
+    visible: true,
+    backgroundColor: "",
+    fillRule: "nonzero",
+    paintFirst: "fill",
+    globalCompositeOperation: "source-over",
+    skewX: 0,
+    skewY: 0,
+    id: "81bb3c84-e7cd-4c6b-86a7-33071d093d9e",
+    name: "New group",
+    objects: [
+      {
+        type: "FontCustom",
+        version: "5.3.0",
+        originX: "left",
+        originY: "top",
+        left: -110,
+        top: -32.08,
+        width: 192,
+        height: 36.16,
+        fill: "rgb(0,0,0)",
+        stroke: null,
+        strokeWidth: 1,
+        strokeDashArray: null,
+        strokeLineCap: "butt",
+        strokeDashOffset: 0,
+        strokeLineJoin: "miter",
+        strokeUniform: true,
+        strokeMiterLimit: 4,
+        scaleX: 1,
+        scaleY: 1,
+        angle: 0,
+        flipX: false,
+        flipY: false,
+        opacity: 1,
+        shadow: null,
+        visible: true,
+        backgroundColor: "",
+        fillRule: "nonzero",
+        paintFirst: "fill",
+        globalCompositeOperation: "source-over",
+        skewX: 0,
+        skewY: 0,
+        fontFamily: "Times New Roman",
+        fontWeight: "normal",
+        fontSize: 32,
+        text: "文字点击输入",
+        underline: false,
+        overline: false,
+        linethrough: false,
+        textAlign: "left",
+        fontStyle: "normal",
+        lineHeight: 1.16,
+        textBackgroundColor: "",
+        charSpacing: 0,
+        styles: [],
+        direction: "ltr",
+        path: null,
+        pathStartOffset: 0,
+        pathSide: "left",
+        pathAlign: "baseline",
+        minWidth: 20,
+        splitByGrapheme: false,
+        id: "20abaac2-9fb2-40c2-8841-a015f01e576c",
+        name: "自定义字体",
+      },
+      {
+        type: "FontCustom",
+        version: "5.3.0",
+        originX: "left",
+        originY: "top",
+        left: -83,
+        top: -5.08,
+        width: 192,
+        height: 36.16,
+        fill: "rgb(0,0,0)",
+        stroke: null,
+        strokeWidth: 1,
+        strokeDashArray: null,
+        strokeLineCap: "butt",
+        strokeDashOffset: 0,
+        strokeLineJoin: "miter",
+        strokeUniform: true,
+        strokeMiterLimit: 4,
+        scaleX: 1,
+        scaleY: 1,
+        angle: 0,
+        flipX: false,
+        flipY: false,
+        opacity: 1,
+        shadow: null,
+        visible: true,
+        backgroundColor: "",
+        fillRule: "nonzero",
+        paintFirst: "fill",
+        globalCompositeOperation: "source-over",
+        skewX: 0,
+        skewY: 0,
+        fontFamily: "Times New Roman",
+        fontWeight: "normal",
+        fontSize: 32,
+        text: "文字点击输入",
+        underline: false,
+        overline: false,
+        linethrough: false,
+        textAlign: "left",
+        fontStyle: "normal",
+        lineHeight: 1.16,
+        textBackgroundColor: "",
+        charSpacing: 0,
+        styles: [],
+        direction: "ltr",
+        path: null,
+        pathStartOffset: 0,
+        pathSide: "left",
+        pathAlign: "baseline",
+        minWidth: 20,
+        splitByGrapheme: false,
+        id: "1727e10d-9ae5-4f28-aeec-db5e6eeb8914",
+        name: "自定义字体",
+      },
+    ],
+  },
+];
 const menus = ref([
   [
     {
@@ -82,7 +268,7 @@ const menus = ref([
       type: "json",
       title: "json打印",
       status: () => {
-        console.log(handler.value.exportJSON());
+        console.log(JSON.stringify(handler.value.exportJSON()));
       },
     },
     {
@@ -91,6 +277,13 @@ const menus = ref([
       status: () => {
         const base64 = handler.value.exportImage();
         handler.value.utils.download(base64);
+      },
+    },
+    {
+      type: "exportJSON",
+      title: "文件上传",
+      status: () => {
+        handler.value.importJSON(a);
       },
     },
   ],
@@ -105,6 +298,11 @@ function handlerEvent(item) {
     item.status();
   }
   menuShow.value = false;
+}
+
+function onRender(data) {
+  guideShow.value = false;
+  handler.value.importJSON(data.json);
 }
 </script>
 <style lang="scss">

@@ -48,8 +48,12 @@ class Psd {
               return newPsdObjArr;
             })
             .then((arr) => {
+              console.log(JSON.parse(JSON.stringify(arr)));
               // 转成json
-              jsonResolve(JSON.stringify(arr));
+              jsonResolve({
+                json: arr,
+                slImage: backgroundImage,
+              });
             });
         })
         .catch((e) => {
@@ -84,8 +88,6 @@ class Psd {
           newGroupObj.type = "group";
           newGroupObj.left = e.left;
           newGroupObj.top = e.top;
-          newGroupObj.width = e.width;
-          newGroupObj.height = e.height;
           newGroupObj.opacity = e.export().opacity;
           newGroupObj.visible = e.export().visible;
           newGroupObj.id = uuid();

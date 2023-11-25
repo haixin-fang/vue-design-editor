@@ -10,7 +10,6 @@ class FabricHandler {
 
   textbox({ text, ...option }: any) {
     option.fontSize = parseInt(option.fontSize);
-    delete option.type;
     return new fabric.Textbox(text, option);
   }
 
@@ -131,7 +130,8 @@ class FabricHandler {
       otherOption.width &&
       this.handler.workareaHandler &&
       this.handler.workareaHandler.workspace &&
-      otherOption.width > width
+      otherOption.width > width &&
+      !this.handler.isimporting
     ) {
       const scale = width / otherOption.width;
       otherOption.scaleX = scale;

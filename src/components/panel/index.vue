@@ -146,6 +146,9 @@
             </div>
           </div>
         </div>
+
+        <div @click="toGroup">成组</div>
+        <div @click="nogroup">拆组</div>
       </div>
     </div>
     <transition name="anime">
@@ -251,6 +254,12 @@ export default {
       },
       remove() {
         handler.value.remove(bgObject.value);
+      },
+      toGroup() {
+        handler.value.toGroup();
+      },
+      nogroup() {
+        handler.value.nogroup();
       },
     };
   },
