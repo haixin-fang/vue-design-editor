@@ -48,7 +48,7 @@
             <template v-for="item in menu" :key="item.type">
               <div
                 class="dc-layout-scale-bar-item__menu__item"
-                :class="getActive(item) ? 'menu-active' : ''"
+                :class="item.active ? 'menu-active' : ''"
                 @click="handlerEvent(item)"
               >
                 <span class="dc-layout-scale-bar-item__menu__item--main">{{
@@ -64,11 +64,19 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, onMounted, onUnmounted, defineProps } from "vue";
+import {
+  ref,
+  inject,
+  onMounted,
+  onUnmounted,
+  defineProps,
+  nextTick,
+} from "vue";
 const menuShow = ref(false);
 const scaleDom = ref();
 const canvas = inject("canvas");
 const handler = inject("handler");
+import _ from "@/utils/_";
 const props = defineProps({
   clearRule: {
     type: Function,
@@ -91,7 +99,8 @@ const menus = ref([
     {
       type: "showRule",
       title: "显示标尺和参考线",
-      status: () => {
+      active: false,
+      status: async () => {
         props.onRuleShow();
       },
     },
@@ -107,6 +116,7 @@ const menus = ref([
     {
       type: "clearRule",
       title: "清除参考线",
+      active: false,
       status: () => {
         props.clearRule();
       },
@@ -117,6 +127,7 @@ const menus = ref([
       type: "size",
       title: "400%",
       value: 4,
+      active: false,
       status: () => {
         handler.value?.workareaHandler.setZoomAuto(4);
       },
@@ -125,6 +136,7 @@ const menus = ref([
       type: "size",
       title: "200%",
       value: 2,
+      active: false,
       status: () => {
         handler.value?.workareaHandler.setZoomAuto(2);
       },
@@ -133,6 +145,7 @@ const menus = ref([
       type: "size",
       title: "100%",
       value: 1,
+      active: false,
       status: () => {
         handler.value?.workareaHandler.setZoomAuto(1);
       },
@@ -141,6 +154,7 @@ const menus = ref([
       type: "size",
       title: "50%",
       value: 0.5,
+      active: false,
       status: () => {
         handler.value?.workareaHandler.setZoomAuto(0.5);
       },
@@ -150,6 +164,7 @@ const menus = ref([
     {
       type: "fullscreen",
       title: "适合满屏",
+      active: false,
       status: () => {
         handler.value?.workareaHandler.one();
       },
@@ -157,14 +172,23 @@ const menus = ref([
     {
       type: "fullscreen",
       title: "填满屏幕",
+      active: false,
       status: () => {
         handler.value?.workareaHandler.one();
       },
     },
   ],
 ]);
-function handlerEvent(item) {
+async function handlerEvent(item) {
   item.status();
+  await nextTick();
+  menus.value.forEach((menu) => {
+    menu.forEach((son) => {
+      son.active = getActive(son);
+    });
+  });
+  await _.sleep(200);
+  menuShow.value = false;
 }
 
 function showMenu() {
@@ -174,14 +198,14 @@ function showMenu() {
 function getActive(menu) {
   if (menuShow.value) {
     const viewportTransform = handler.value?.canvas?.viewportTransform || [];
-    const one = handler.value?.workareaHandler?.one();
+    const scale = handler.value?.workareaHandler?.getAutoScale();
     switch (menu.type) {
       case "showRule":
         return props.ruleShow;
       case "size":
         return menu.value == viewportTransform[0];
       case "fullscreen":
-        return one == viewportTransform[0];
+        return scale == viewportTransform[0];
     }
   }
 }
@@ -191,6 +215,7 @@ function getZoom() {
   }
   return "0%";
 }
+
 function setRandom() {
   random.value = Math.random() * 1000;
 }

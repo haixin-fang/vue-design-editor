@@ -150,6 +150,12 @@ function init() {
       }
       popoverLeft = left - offsetWidth - 10;
       originX = offsetWidth;
+    } else if (left < offsetWidth && top < offsetHeight) {
+      // 右下
+      popoverTop = top + 10;
+      originY = 10;
+      popoverLeft = left;
+      originX = 0;
     }
   } else if (props.placement == "left") {
     popoverTop = top - offsetHeight / 2;
@@ -162,7 +168,7 @@ function init() {
   popover.value.style.top = popoverTop + "px";
   popover.value.style.transformOrigin = `${originX}px ${originY}px`;
 }
-
+// 目的是保证dom渲染完成
 const setSlotRef = (dom) => {
   el = dom;
 };

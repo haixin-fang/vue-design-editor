@@ -10,3 +10,7 @@ declare module "element-plus";
 declare module "uuid";
 
 declare module "*.svg";
+
+interface Window {
+  showOpenFilePicker: (params: any) => any;
+}

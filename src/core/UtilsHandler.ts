@@ -52,6 +52,21 @@ class UtilsHandler {
     return findObject;
   };
 
+  dataURItoBlob(dataURI) {
+    let byteString;
+    if (dataURI.split(",")[0].indexOf("base64") >= 0)
+      byteString = atob(dataURI.split(",")[1]);
+    else byteString = unescape(dataURI.split(",")[1]);
+    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+    const ia = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ia], {
+      type: mimeString,
+    });
+  }
+
   fileToBase64 = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -89,6 +104,24 @@ class UtilsHandler {
       return marterialObject;
     }
   };
+
+  async download(base64, filename) {
+    const blob = await this.dataURItoBlob(base64);
+    const a = document.createElement("a");
+    // 兼容webkix浏览器，处理webkit浏览器中href自动添加blob前缀，默认在浏览器打开而不是下载
+    const URL = window.URL || window.webkitURL;
+    // 根据解析后的blob对象创建URL 对象
+    const herf = URL.createObjectURL(blob);
+    // 下载链接
+    a.href = herf;
+    // 下载文件名,如果后端没有返回，可以自己写a.download = '文件.pdf'
+    a.download = filename || "vue-design-editor";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // 在内存中移除URL 对象
+    window.URL.revokeObjectURL(herf);
+  }
 
   calculateGradientCoordinate(width: number, height: number, angle = 180) {
     if (angle >= 360) angle = angle - 360;

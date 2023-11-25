@@ -8,6 +8,11 @@ export default {
       timer = setTimeout(fn, wait);
     };
   },
+  sleep(timeout: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+  },
   deepClone(target: any) {
     // 定义一个变量
     let result: any;

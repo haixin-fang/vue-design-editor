@@ -236,7 +236,6 @@ export default {
       getBgColor() {
         if (!workspace.value) return;
         if (typeof workspace.value.fill == "string") {
-          debugger;
           return `background: ${workspace.value.fill}`;
         } else if (workspace.value.backgroundColor) {
           return `background: ${workspace.value.backgroundColor}`;

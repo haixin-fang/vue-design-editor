@@ -4,7 +4,7 @@ import UitlsHandler from "./UtilsHandler";
 import ImageHandler from "./ImageHandler";
 import ControlHandler from "./ControlHandler";
 import { WorkareaOption, WorkareaObject, FabricImage } from "@/types/utils";
-import { objectOption } from "../constants/workspace";
+import { objectOption, propertiesToInclude } from "../constants/workspace";
 
 import _ from "@/utils/_";
 
@@ -49,6 +49,7 @@ class Handler implements HandlerOptions {
   public imageHandler: ImageHandler;
   public objectOption?: any = objectOption;
   private control: ControlHandler;
+  public propertiesToInclude = propertiesToInclude;
   public canvas;
   public onAdd;
   public onSelect;
@@ -227,6 +228,43 @@ class Handler implements HandlerOptions {
       target.dispose();
     }
     this.onSelect(null);
+  };
+
+  /**
+   * 画布json数据
+   * @returns
+   */
+  exportJSON = () => {
+    const target = this.canvas.getActiveObject();
+    if (target && target.type == "FontCustom" && target.getSelectedText()) {
+      this.cancelSelect();
+    }
+    const objects = this.canvas.toObject(this.propertiesToInclude).objects;
+    return objects;
+  };
+  /**
+   *
+   * @param type 导出类型
+   * @param quality 导出质量
+   * @returns
+   */
+  exportImage = (type, quality = 100) => {
+    if (type == "jpg") {
+      type = "jpeg";
+    }
+    const viewportTransform = this.canvas.viewportTransform || [];
+    this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    const { width, height, left, top } = this.workareaHandler.workspace;
+    const image = this.canvas.toDataURL({
+      format: type || "png",
+      quality: quality / 100 || 1,
+      width,
+      height,
+      left,
+      top,
+    });
+    this.canvas.setViewportTransform(viewportTransform);
+    return image;
   };
 
   /**

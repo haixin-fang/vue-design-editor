@@ -57,7 +57,8 @@
 </template>
 <script setup lang="ts">
 import { useStore } from "vuex";
-import { computed, nextTick, onMounted, ref } from "vue";
+import { ElTooltip } from "element-plus";
+import { computed, onMounted, ref } from "vue";
 const DEFAUTL_LEFT_COLUMN_WIDTH = 313;
 const DEFAUTL_RIGHT_COLUMN_WIDTH = 265;
 const DEFAUTL_RIGHT_MODUELE_WIDTH = 72;
