@@ -7,7 +7,6 @@ if (typeof window.Buffer === "undefined") {
 class Psd {
   constructor(uploadUrl, uploadCallback) {
     // 存储模板json
-    this.json = [];
     this.uploadUrl = uploadUrl;
     this.uploadCallback = uploadCallback;
   }
@@ -17,7 +16,7 @@ class Psd {
       let fileName =
         file.name.substring(0, file.name.lastIndexOf(".")) + ".png";
       // psd文件
-      var url = URL.createObjectURL(file);
+      const url = URL.createObjectURL(file);
       // 解析psd文件
       PSD.fromURL(url)
         .then(async (psd) => {
@@ -79,6 +78,7 @@ class Psd {
 
   getPsdJson(childrenList, resolve, list) {
     let outProArr = [];
+    debugger;
     Array.from(childrenList).forEach((e, i) => {
       let outPro = new Promise((res) => {
         // 顶级图层/文件夹

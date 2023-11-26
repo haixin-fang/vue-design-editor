@@ -266,7 +266,7 @@ class Handler implements HandlerOptions {
 
   // 判断是否是空白画布
   isEmptyCanvas() {
-    const json = this.exportJSON().filter((item) => {
+    const json = this.exportJSON().filter((item: any) => {
       if (
         item.id != "workarea" ||
         (item.id == "workarea" && item.fill != "#fff")
@@ -289,14 +289,14 @@ class Handler implements HandlerOptions {
     return true;
   }
 
-  importGroup = async (group, render = false, activeObject) => {
+  importGroup = async (group: any, render = false, activeObject?: any) => {
     const objects = group.objects;
     if (!Array.isArray(objects)) return [];
     const res = [];
     for (let i = 0; i < objects.length; i++) {
       if (!objects[i]) continue;
       if (objects[i].type == "group") {
-        const groupObject = await this.importGroup(
+        const groupObject: any = await this.importGroup(
           objects[i],
           false,
           activeObject
@@ -316,7 +316,7 @@ class Handler implements HandlerOptions {
           lockMovementX: !editable, // 当`true`时，对象水平移动被锁定
           lockMovementY: !editable, //当`true`时，对象垂直移动被锁定
         };
-        const object = new fabric.Group(groupObject, {
+        const object: any = new fabric.Group(groupObject, {
           ...objects[i],
           ...option,
           ...JSON.parse(JSON.stringify(this.objectOption)),
@@ -346,8 +346,8 @@ class Handler implements HandlerOptions {
     return res;
   };
 
-  public toGroup = (target?: FabricObject) => {
-    const activeObject =
+  public toGroup = (target?: WorkareaObject) => {
+    const activeObject: any =
       target || (this.canvas.getActiveObject() as fabric.ActiveSelection);
     if (!activeObject) {
       return null;
@@ -355,7 +355,7 @@ class Handler implements HandlerOptions {
     if (activeObject.type !== "activeSelection") {
       return null;
     }
-    const group = activeObject.toGroup() as FabricObject<fabric.Group>;
+    const group = activeObject.toGroup();
     group.set({
       id: uuid(),
       name: "New group",
@@ -370,7 +370,7 @@ class Handler implements HandlerOptions {
     return group;
   };
 
-  public nogroup = (target?: FabricObject) => {
+  public nogroup = (target?: any) => {
     const activeObject =
       target || (this.canvas.getActiveObject() as fabric.Group);
     if (!activeObject) {
@@ -387,7 +387,7 @@ class Handler implements HandlerOptions {
     return activeSelection;
   };
 
-  importGroupJSON = async (obj) => {
+  importGroupJSON = async (obj: any) => {
     const res = await this.importGroup(obj);
     delete obj.objects;
     const { editable } = this;
@@ -403,7 +403,7 @@ class Handler implements HandlerOptions {
     delete obj.width;
     delete obj.height;
     // const group = this.canvas.group(res);
-    const group = new fabric.Group(res, {
+    const group: any = new fabric.Group(res, {
       ...option,
       ...JSON.parse(JSON.stringify(this.objectOption)),
       ...obj,
@@ -420,7 +420,7 @@ class Handler implements HandlerOptions {
    *
    * @param {*} json
    */
-  importJSON = async (json) => {
+  importJSON = async (json: any) => {
     console.log("json", json);
     if (!this.canvas.contextTop) return;
     this.isimporting = true;
@@ -431,7 +431,7 @@ class Handler implements HandlerOptions {
       if (typeof json === "string") {
         json = JSON.parse(json);
       }
-      const workarea = json.find((obj) => obj.id == "workarea");
+      const workarea = json.find((obj: any) => obj.id == "workarea");
       // this.workareaHandler.initialize();
       if (workarea && this.workareaHandler.workspace) {
         this.workareaHandler.setSize(workarea.width, workarea.height);

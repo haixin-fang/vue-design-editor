@@ -44,6 +44,8 @@ export interface WorkareaOption {
     cb: () => void,
     option: { dirty: boolean; crossOrigin?: "Anonymous"; [key: string]: any }
   ) => void;
+
+  toGroup?: () => any;
 }
 /**
  * 画布元素

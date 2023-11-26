@@ -105,7 +105,7 @@ class UtilsHandler {
     }
   };
 
-  async download(base64, filename) {
+  async download(base64: string, filename: string) {
     const blob = await this.dataURItoBlob(base64);
     const a = document.createElement("a");
     // 兼容webkix浏览器，处理webkit浏览器中href自动添加blob前缀，默认在浏览器打开而不是下载
