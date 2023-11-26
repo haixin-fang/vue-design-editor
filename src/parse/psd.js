@@ -78,7 +78,6 @@ class Psd {
 
   getPsdJson(childrenList, resolve, list) {
     let outProArr = [];
-    debugger;
     Array.from(childrenList).forEach((e, i) => {
       let outPro = new Promise((res) => {
         // 顶级图层/文件夹
@@ -141,7 +140,7 @@ class Psd {
                   if (exportObj.text.font.alignment[0] != "left") {
                     newTextObj.textAlign = exportObj.text.font.alignment[0];
                   }
-                  if (itemObj.tracking != 0) {
+                  if (itemObj.tracking != 0 && itemObj.tracking) {
                     newTextObj.charSpacing = itemObj.tracking;
                   }
                   // newTextObj.id = uuid();
