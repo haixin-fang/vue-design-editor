@@ -245,13 +245,13 @@ class Handler implements HandlerOptions {
    * @param quality 导出质量
    * @returns
    */
-  exportImage = (type, quality = 100) => {
+  exportImage = (type: string, quality = 100) => {
     if (type == "jpg") {
       type = "jpeg";
     }
     const viewportTransform = this.canvas.viewportTransform || [];
     this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
-    const { width, height, left, top } = this.workareaHandler.workspace;
+    const { width, height, left, top } = this.workareaHandler.workspace as any;
     const image = this.canvas.toDataURL({
       format: type || "png",
       quality: quality / 100 || 1,
@@ -402,9 +402,6 @@ class Handler implements HandlerOptions {
     };
     delete obj.width;
     delete obj.height;
-    if (obj.name == "装饰") {
-      debugger;
-    }
     // const group = this.canvas.group(res);
     const group = new fabric.Group(res, {
       ...option,

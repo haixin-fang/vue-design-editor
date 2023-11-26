@@ -88,6 +88,8 @@ class Psd {
           newGroupObj.type = "group";
           newGroupObj.left = e.left;
           newGroupObj.top = e.top;
+          newGroupObj.width = e.width;
+          newGroupObj.height = e.height;
           newGroupObj.opacity = e.export().opacity;
           newGroupObj.visible = e.export().visible;
           newGroupObj.id = uuid();

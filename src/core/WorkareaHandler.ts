@@ -97,6 +97,9 @@ class EditorWorkspace {
     this.option.height = height * this.unitEnum[unit];
     // 重新设置workspace
     this.workspace = this.handler.utils.findById("workarea") as fabric.Rect;
+    if (!this.workspace) {
+      this.initialize();
+    }
     this.workspace.set("width", this.option.width);
     this.workspace.set("height", this.option.height);
     this.auto();
