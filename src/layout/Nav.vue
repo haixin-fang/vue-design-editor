@@ -110,14 +110,14 @@ function handlerEvent(item) {
 
 function onRender(data) {
   guideShow.value = false;
-  console.log(data);
-  const eleLink = document.createElement("a");
-  eleLink.download = "模板";
-  const blob = new Blob([JSON.stringify(data)]);
-  eleLink.href = URL.createObjectURL(blob);
-  document.body.appendChild(eleLink);
-  eleLink.click();
-  document.body.removeChild(eleLink);
+  // console.log(data);
+  // const eleLink = document.createElement("a");
+  // eleLink.download = "模板";
+  // const blob = new Blob([JSON.stringify(data)]);
+  // eleLink.href = URL.createObjectURL(blob);
+  // document.body.appendChild(eleLink);
+  // eleLink.click();
+  // document.body.removeChild(eleLink);
   handler.value.importJSON(data.json);
 }
 </script>
