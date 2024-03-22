@@ -30,7 +30,8 @@
               <div class="panel-row">
                 <div class="panel-row__label">尺寸</div>
                 <div class="panel-row__content" v-if="workspace">
-                  {{ workspace.width }} × {{ workspace.height }} px
+                  {{ parseInt(workspace.width) }} ×
+                  {{ parseInt(workspace.height) }} px
                 </div>
               </div>
               <div class="gda-space-item">

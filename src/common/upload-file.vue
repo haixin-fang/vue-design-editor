@@ -132,20 +132,21 @@ import { defineEmits, ref, computed } from "vue";
 import { ElIcon } from "element-plus";
 import { Close } from "@element-plus/icons-vue";
 import { tryOnMounted, useEventListener } from "@vueuse/core";
-import getFileType from "@/utils/getFileType";
-import Psd from "@/parse/psd";
+// import getFileType from "@/utils/getFileType";
+// import Psd from "@/parse/psd";
+import toJson, { getFileType, types as fileTypes } from "tojson.js";
 const fileList = ref<File[]>([]);
 const dragArea = ref();
 const isDrag = ref(false);
 
-const mapStrategyType: any = {
-  psd: (file: File) => {
-    return new Psd(file);
-  },
-};
+// const mapStrategyType: any = {
+//   psd: (file: File) => {
+//     return new Psd(file);
+//   },
+// };
 
 const types = computed(() => {
-  return Object.keys(mapStrategyType);
+  return fileTypes;
 });
 // 其他限制
 // 需要https环境，如果是本地localhost 不受此限制。
@@ -194,6 +195,7 @@ function onClose() {
 }
 async function chooseFiles() {
   let arrFileHandle;
+  debugger;
   if (!window.showOpenFilePicker) {
     const input = document.createElement("input");
     input.type = "file";
@@ -210,7 +212,7 @@ async function chooseFiles() {
       types: [
         {
           accept: {
-            "image/*": [types.value.map((key) => "." + key).join(",")], //".png", ".gif", ".jpeg", ".jpg", ".webp",
+            "image/*": [types.value.map((key: string) => "." + key).join(",")], //".png", ".gif", ".jpeg", ".jpg", ".webp",
           },
         },
       ],
@@ -221,23 +223,28 @@ async function chooseFiles() {
   // 遍历选择的文件
   for (const fileHandle of arrFileHandle) {
     // 获取文件内容
-    const fileData = await fileHandle.getFile();
-    fileList.value.push(fileData);
+    // const fileData = await fileHandle.getFile();
+    fileList.value.push(fileHandle);
   }
 }
 
 async function onGuide() {
+  // const files = fileList.value[0];
+  // const file = await getFileType(files);
+  // if (file) {
+  //   const { ext }: any = file;
+  //   if (mapStrategyType[ext]) {
+  //     const handler = mapStrategyType[ext]();
+  //     const data = await handler.init(files);
+  //     console.log("json", JSON.stringify(data.json));
+  //     emit("render", data);
+  //   }
+  // }
   const files = fileList.value[0];
-  const file = await getFileType(files);
-  if (file) {
-    const { ext }: any = file;
-    if (mapStrategyType[ext]) {
-      const handler = mapStrategyType[ext]();
-      const data = await handler.init(files);
-      console.log("json", JSON.stringify(data.json));
-      emit("render", data);
-    }
-  }
+  const result = await toJson(files);
+  console.log(result);
+  debugger;
+  emit("render", result);
 }
 </script>
 <style lang="scss" scoped>

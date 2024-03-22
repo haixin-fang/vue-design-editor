@@ -298,13 +298,15 @@ function handleDragStart(e, item, i) {
           min-height: 40px;
           padding: 0 16px;
           .content {
-            display: flex;
-            flex-wrap: wrap;
+            // display: flex;
+            display: grid;
+            // flex-wrap: wrap;
             flex: 1;
+            grid-template-columns: repeat(3, 33%);
+            grid-column-gap: 10px;
             width: 100%;
             font: var(--text-p1-regular);
             color: var(--text-color-primary);
-            justify-content: space-between;
             .addItem {
               margin-right: 8px;
               margin-bottom: 8px;
@@ -449,6 +451,8 @@ function handleDragStart(e, item, i) {
           padding: 4px;
           background: #f1f2f4;
           border-radius: var(--border-radius-large);
+          display: grid;
+          grid-template-columns: repeat(4, 25%);
         }
         .material-detail {
           margin: 4px;
@@ -458,6 +462,7 @@ function handleDragStart(e, item, i) {
           display: flex;
           align-items: center;
           justify-content: center;
+
           background: rgb(241, 242, 244);
           transition: all 0.1s ease-in;
           img {

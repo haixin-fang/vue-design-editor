@@ -22,7 +22,7 @@
         mainLineSize="50%"
         selectedBackgroundColor="#d9dcdf"
         backgroundColor="#f6f7f9"
-        lineColor="#7f8792"
+        lineColor="#e8eaec"
         :defaultPixelScale="1"
         :scrollPos="20"
         :selectedRangesText="true"
@@ -371,15 +371,19 @@ export default {
     left: 0px;
     width: 100%;
     height: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
+    :deep(canvas) {
+      border-bottom: 1px solid #e8eaec;
+    }
   }
   .ruler.vertical {
     top: 0px;
     width: 20px;
     height: 100%;
-    border-right: 1px solid rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
+    :deep(canvas) {
+      border-right: 1px solid #e8eaec;
+    }
   }
   .box {
     position: relative;

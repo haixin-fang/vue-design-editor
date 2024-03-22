@@ -14,3 +14,5 @@ declare module "*.svg";
 interface Window {
   showOpenFilePicker: (params: any) => any;
 }
+
+declare module "tojson.js";

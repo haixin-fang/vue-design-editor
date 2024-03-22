@@ -32,6 +32,7 @@
     "framework-utils": "^1.1.0",
     "lodash-es": "^4.17.21",
     "psd.js": "3.6.3",
+    "tojson.js": "^1.0.6",
     "uuid": "^9.0.0",
     "vite-plugin-require-transform": "^1.0.21",
     "vue": "^3.2.13",

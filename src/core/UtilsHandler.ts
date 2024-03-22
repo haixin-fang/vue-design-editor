@@ -52,7 +52,7 @@ class UtilsHandler {
     return findObject;
   };
 
-  dataURItoBlob(dataURI) {
+  dataURItoBlob(dataURI: string) {
     let byteString;
     if (dataURI.split(",")[0].indexOf("base64") >= 0)
       byteString = atob(dataURI.split(",")[1]);
