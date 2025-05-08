@@ -212,7 +212,7 @@ async function chooseFiles() {
       types: [
         {
           accept: {
-            "image/*": [types.value.map((key: string) => "." + key).join(",")], //".png", ".gif", ".jpeg", ".jpg", ".webp",
+            "image/*": types.value.map((key: string) => "." + key), //".png", ".gif", ".jpeg", ".jpg", ".webp",
           },
         },
       ],
@@ -223,9 +223,13 @@ async function chooseFiles() {
   // 遍历选择的文件
   for (const fileHandle of arrFileHandle) {
     // 获取文件内容
-    // const fileData = await fileHandle.getFile();
-    fileList.value.push(fileHandle);
-  }
+    if (fileHandle.getFile()) {
+      const fileData = await fileHandle.getFile();
+      fileList.value.push(fileData);
+    } else {
+      fileList.value.push(fileHandle);
+    }
+  } 
 }
 
 async function onGuide() {
